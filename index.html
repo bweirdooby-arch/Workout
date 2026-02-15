@@ -1712,8 +1712,10 @@
     };
 
     window.deleteMeal = (idx) => {
-      nutriLogs[currentDate].splice(idx, 1);
-      saveToStorage(); saveToFirebase(); renderNutrition();
+      if (confirm("Are you sure you want to delete this meal?")) {
+        nutriLogs[currentDate].splice(idx, 1);
+        saveToStorage(); saveToFirebase(); renderNutrition();
+      }
     };
 
 
