@@ -1,527 +1,1034 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-<meta charset="UTF-8">
-<title>Workout Tracker</title>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<link rel="manifest" href="manifest.json">
-<meta name="theme-color" content="#E9B872">
-<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+  <meta charset="UTF-8">
+  <title>Workout Tracker</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <link rel="manifest" href="manifest.json">
+  <meta name="theme-color" content="#E9B872">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
-<style>
-/* 1. Import Modern Font */
-@import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
+  <style>
+    /* 1. Import Modern Font */
+    @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&display=swap');
 
-/* 2. Modern Color Variables (Slate & Amber Theme) */
-:root {
-  --bg: #F8FAFC;          /* Light Slate Background */
-  --card: #FFFFFF;        /* Pure White Card */
-  --text: #0F172A;        /* Deep Navy Text */
-  --muted: #64748B;       /* Slate Gray Muted */
-  --accent: #F59E0B;      /* Modern Amber/Gold */
-  --accent-fg: #FFFFFF;   /* Text on accent */
-  --border: #E2E8F0;      /* Light Border */
-  --input-bg: #F1F5F9;    /* Light Gray Input */
-  --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-  --radius: 16px;         /* Consistent Rounding */
-}
+    /* 2. Modern Color Variables (Slate & Amber Theme) */
+    :root {
+      --bg: #F8FAFC;
+      /* Light Slate Background */
+      --card: #FFFFFF;
+      /* Pure White Card */
+      --text: #0F172A;
+      /* Deep Navy Text */
+      --muted: #64748B;
+      /* Slate Gray Muted */
+      --accent: #F59E0B;
+      /* Modern Amber/Gold */
+      --accent-fg: #FFFFFF;
+      /* Text on accent */
+      --border: #E2E8F0;
+      /* Light Border */
+      --input-bg: #F1F5F9;
+      /* Light Gray Input */
+      --shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+      --radius: 16px;
+      /* Consistent Rounding */
+    }
 
-body.dark {
-  --bg: #0F172A;          /* Deepest Slate */
-  --card: #1E293B;        /* Dark Slate Card */
-  --text: #F8FAFC;        /* White Text */
-  --muted: #94A3B8;       /* Light Slate Muted */
-  --accent: #FBBF24;      /* Bright Amber */
-  --accent-fg: #1E293B;   /* Dark text on bright accent */
-  --border: #334155;      /* Dark Border */
-  --input-bg: #020617;    /* Almost Black Input */
-  --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
-}
+    body.dark {
+      --bg: #0F172A;
+      /* Deepest Slate */
+      --card: #1E293B;
+      /* Dark Slate Card */
+      --text: #F8FAFC;
+      /* White Text */
+      --muted: #94A3B8;
+      /* Light Slate Muted */
+      --accent: #FBBF24;
+      /* Bright Amber */
+      --accent-fg: #1E293B;
+      /* Dark text on bright accent */
+      --border: #334155;
+      /* Dark Border */
+      --input-bg: #020617;
+      /* Almost Black Input */
+      --shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.5);
+    }
 
-/* 3. Base Resets */
-* { box-sizing: border-box; font-family: 'Inter', system-ui, sans-serif; -webkit-tap-highlight-color: transparent; }
-body { margin: 0; background: var(--bg); color: var(--text); line-height: 1.5; transition: background 0.3s ease, color 0.3s ease; }
+    /* 3. Base Resets */
+    * {
+      box-sizing: border-box;
+      font-family: 'Inter', system-ui, sans-serif;
+      -webkit-tap-highlight-color: transparent;
+    }
 
-/* 4. Layout & Views */
-.view { display: none; padding: 20px 16px; max-width: 600px; margin: 0 auto; padding-bottom: 80px; }
-.view.active { display: block; animation: fadeIn 0.3s ease; }
+    body {
+      margin: 0;
+      background: var(--bg);
+      color: var(--text);
+      line-height: 1.5;
+      transition: background 0.3s ease, color 0.3s ease;
+    }
 
-@keyframes fadeIn { from { opacity: 0; transform: translateY(5px); } to { opacity: 1; transform: translateY(0); } }
+    /* 4. Layout & Views */
+    .view {
+      display: none;
+      padding: 20px 16px;
+      max-width: 600px;
+      margin: 0 auto;
+      padding-bottom: 80px;
+    }
 
-/* 5. Modern Cards */
-.card {
-  background: var(--card);
-  border-radius: var(--radius);
-  padding: 20px;
-  margin-bottom: 16px;
-  box-shadow: var(--shadow);
-  border: 1px solid var(--border);
-}
+    .view.active {
+      display: block;
+      animation: fadeIn 0.3s ease;
+    }
 
-/* 6. Typography & Ribbons */
-h3, h4 { margin: 0 0 12px 0; font-weight: 700; letter-spacing: -0.025em; }
-.muted { color: var(--muted) !important; font-size: 0.875rem; }
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(5px);
+      }
 
-.log-ribbon {
-  display: inline-block;
-  background: var(--accent);
-  color: var(--accent-fg) !important;
-  font-weight: 700;
-  font-size: 0.85rem;
-  padding: 6px 12px;
-  border-radius: 8px; /* Pill shape */
-  margin-bottom: 12px;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-}
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
 
-/* 7. Inputs & Forms */
-input, select {
-  width: 100%;
-  padding: 14px 16px;
-  margin-top: 8px;
-  border: 1px solid var(--border);
-  border-radius: 12px;
-  background: var(--input-bg);
-  color: var(--text);
-  font-size: 1rem;
-  transition: all 0.2s;
-}
-input:focus, select:focus {
-  outline: none;
-  border-color: var(--accent);
-  box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
-}
+    /* 5. Modern Cards */
+    .card {
+      background: var(--card);
+      border-radius: var(--radius);
+      padding: 20px;
+      margin-bottom: 16px;
+      box-shadow: var(--shadow);
+      border: 1px solid var(--border);
+    }
 
-/* 8. Buttons (High Usability) */
-button { cursor: pointer; border: none; font-weight: 600; transition: transform 0.1s; display: inline-flex; align-items: center; justify-content: center; }
-button:active { transform: scale(0.96); }
+    /* 6. Typography & Ribbons */
+    h3,
+    h4 {
+      margin: 0 0 12px 0;
+      font-weight: 700;
+      letter-spacing: -0.025em;
+    }
 
-.primary {
-  width: 100%;
-  padding: 16px;
-  border-radius: 14px;
-  background: var(--accent);
-  color: var(--accent-fg) !important;
-  font-size: 1rem;
-  box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
-}
+    .muted {
+      color: var(--muted) !important;
+      font-size: 0.875rem;
+    }
 
-.secondary {
-  width: 100%;
-  padding: 14px;
-  border-radius: 14px;
-  background: transparent;
-  border: 1px solid var(--border);
-  color: var(--text) !important;
-  margin-top: 8px;
-}
-body.dark .secondary { background: rgba(255,255,255,0.05); }
+    .log-ribbon {
+      display: inline-block;
+      background: var(--accent);
+      color: var(--accent-fg) !important;
+      font-weight: 700;
+      font-size: 0.85rem;
+      padding: 6px 12px;
+      border-radius: 8px;
+      /* Pill shape */
+      margin-bottom: 12px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+    }
 
-.icon-btn {
-  flex: 1;
-  padding: 10px;
-  border-radius: 10px;
-  font-size: 0.9rem;
-  background: var(--input-bg);
-  color: var(--text) !important;
-  border: 1px solid var(--border);
-}
+    /* 7. Inputs & Forms */
+    input,
+    select {
+      width: 100%;
+      padding: 14px 16px;
+      margin-top: 8px;
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      background: var(--input-bg);
+      color: var(--text);
+      font-size: 1rem;
+      transition: all 0.2s;
+    }
 
-.actions { display: flex; gap: 8px; margin-top: 16px; }
+    input:focus,
+    select:focus {
+      outline: none;
+      border-color: var(--accent);
+      box-shadow: 0 0 0 3px rgba(245, 158, 11, 0.2);
+    }
 
-/* 9. Header & Date Nav */
-header {
-  display: flex; align-items: center; justify-content: space-between;
-  padding: 16px 20px;
-  background: var(--card);
-  border-bottom: 1px solid var(--border);
-  position: sticky; top: 0; z-index: 10;
-}
-header button {
-  background: var(--input-bg);
-  width: 40px; height: 40px;
-  border-radius: 50%; /* Circle buttons */
-  font-size: 1.2rem;
-  color: var(--text);
-  border: 1px solid var(--border);
-}
-.date-wrap { display: flex; flex-direction: column; align-items: center; }
-#dayName { font-size: 0.8rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.05em; color: var(--accent); margin-top: 2px;}
-#date {
-  border: none; background: transparent; 
-  padding: 0; margin: 0; 
-  font-weight: 700; font-size: 1.1rem; 
-  text-align: center; width: auto; cursor: text;
-}
-.done-today { border-bottom: 2px solid var(--accent); }
+    /* 8. Buttons (High Usability) */
+    button {
+      cursor: pointer;
+      border: none;
+      font-weight: 600;
+      transition: transform 0.1s;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+    }
 
-/* 10. Navigation Tabs (Segmented Control Style) */
-.tabs {
-  display: flex; gap: 8px; padding: 12px 16px;
-  overflow-x: auto; scrollbar-width: none;
-  background: var(--bg);
-}
-.tabs::-webkit-scrollbar { display: none; }
-.tabs button {
-  padding: 8px 16px;
-  border-radius: 20px;
-  font-size: 0.9rem;
-  color: var(--muted);
-  background: transparent;
-  white-space: nowrap;
-  border: 1px solid transparent;
-}
-.tabs button.active {
-  background: var(--accent);
-  color: var(--accent-fg);
-  font-weight: 700;
-  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.25);
-}
-/* Add this to your CSS */
-.toggle {
-  display: flex;
-  gap: 8px;
-  margin-top: 16px;
-  padding: 4px;
-  background: var(--input-bg);
-  border-radius: 14px;
-  border: 1px solid var(--border);
-}
+    button:active {
+      transform: scale(0.96);
+    }
 
-.toggle button {
-  flex: 1;
-  padding: 10px;
-  border-radius: 10px;
-  font-size: 0.9rem;
-  background: transparent;
-  color: var(--muted);
-  transition: all 0.2s ease;
-}
+    .primary {
+      width: 100%;
+      padding: 16px;
+      border-radius: 14px;
+      background: var(--accent);
+      color: var(--accent-fg) !important;
+      font-size: 1rem;
+      box-shadow: 0 4px 12px rgba(245, 158, 11, 0.3);
+    }
 
-.toggle button.active {
-  background: var(--card); /* Uses card color for "selected" look */
-  color: var(--accent);
-  font-weight: 700;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-}
+    .secondary {
+      width: 100%;
+      padding: 14px;
+      border-radius: 14px;
+      background: transparent;
+      border: 1px solid var(--border);
+      color: var(--text) !important;
+      margin-top: 8px;
+    }
 
-/* Optional: Dark mode adjustment for the active button */
-body.dark .toggle button.active {
-  background: var(--accent);
-  color: var(--accent-fg);
-}
-/* 11. List & History Styling */
-.set-line {
-  display: flex; justify-content: space-between;
-  padding: 8px 0;
-  border-bottom: 1px solid var(--border);
-  font-size: 0.95rem;
-}
-.set-line:last-child { border-bottom: none; }
-.best-set { color: var(--accent); font-weight: 700; }
+    body.dark .secondary {
+      background: rgba(255, 255, 255, 0.05);
+    }
 
-/* 12. Modal & Utilities */
-#modal {
-  position: fixed; inset: 0; background: rgba(0,0,0,0.6);
-  display: none; align-items: flex-end; justify-content: center;
-  backdrop-filter: blur(4px); z-index: 100;
-}
-.sheet {
-  background: var(--card);
-  width: 100%; max-width: 600px;
-  padding: 24px;
-  border-radius: 24px 24px 0 0;
-  box-shadow: 0 -10px 40px rgba(0,0,0,0.2);
-  animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
-}
-@keyframes slideUp { from { transform: translateY(100%); } to { transform: translateY(0); } }
+    .icon-btn {
+      flex: 1;
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      background: var(--input-bg);
+      color: var(--text) !important;
+      border: 1px solid var(--border);
+    }
 
-.set { display: flex; gap: 10px; margin-top: 8px; }
+    .actions {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+    }
 
-/* Toggle Switch */
-.switch { position: relative; width: 50px; height: 28px; }
-.switch input { display: none; }
-.slider { position: absolute; inset: 0; background: var(--border); border-radius: 34px; transition: .3s; cursor: pointer; }
-.slider:before { content: ""; position: absolute; height: 22px; width: 22px; left: 3px; bottom: 3px; background: white; border-radius: 50%; transition: .3s; box-shadow: 0 2px 4px rgba(0,0,0,0.2); }
-input:checked + .slider { background: var(--accent); }
-input:checked + .slider:before { transform: translateX(22px); }
+    /* 9. Header & Date Nav */
+    header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      padding: 16px 20px;
+      background: var(--card);
+      border-bottom: 1px solid var(--border);
+      position: sticky;
+      top: 0;
+      z-index: 10;
+    }
 
-/* Table Styles */
-table { width: 100%; border-collapse: collapse; margin-top: 8px; }
-th { text-align: left; font-size: 0.75rem; text-transform: uppercase; color: var(--muted); border-bottom: 2px solid var(--border); padding: 8px 4px; }
-td { padding: 12px 4px; border-bottom: 1px solid var(--border); font-variant-numeric: tabular-nums; }
-</style>
+    header button {
+      background: var(--input-bg);
+      width: 40px;
+      height: 40px;
+      border-radius: 50%;
+      /* Circle buttons */
+      font-size: 1.2rem;
+      color: var(--text);
+      border: 1px solid var(--border);
+    }
 
-<!-- Firebase SDK -->
-<script type="module">
-  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
-  import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut } 
-    from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
-  import { getFirestore, doc, getDoc, setDoc } 
-    from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+    .date-wrap {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+    }
 
-  const firebaseConfig = {
-  apiKey: "AIzaSyClkqSLVO9KbV0RdQWXnjcuxS7mFFOsARY",
-  authDomain: "workout-tracker-1c61f.firebaseapp.com",
-  projectId: "workout-tracker-1c61f",
-  storageBucket: "workout-tracker-1c61f.firebasestorage.app",
-  messagingSenderId: "718770745731",
-  appId: "1:718770745731:web:45e4f9498a5e3dc70a06b6",
-  measurementId: "G-7P1QTCG7QF"
-};
-  const app = initializeApp(firebaseConfig);
-  const auth = getAuth(app);
-  const db = getFirestore(app);
+    #dayName {
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      color: var(--accent);
+      margin-top: 2px;
+    }
 
-  window.fb = { auth, db, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, doc, getDoc, setDoc };
-</script>
+    #date {
+      border: none;
+      background: transparent;
+      padding: 0;
+      margin: 0;
+      font-weight: 700;
+      font-size: 1.1rem;
+      text-align: center;
+      width: auto;
+      cursor: text;
+    }
+
+    .done-today {
+      border-bottom: 2px solid var(--accent);
+    }
+
+    /* 10. Navigation Tabs (Segmented Control Style) */
+    .tabs {
+      display: flex;
+      gap: 8px;
+      padding: 12px 16px;
+      overflow-x: auto;
+      scrollbar-width: none;
+      background: var(--bg);
+    }
+
+    .tabs::-webkit-scrollbar {
+      display: none;
+    }
+
+    .tabs button {
+      padding: 8px 16px;
+      border-radius: 20px;
+      font-size: 0.9rem;
+      color: var(--muted);
+      background: transparent;
+      white-space: nowrap;
+      border: 1px solid transparent;
+    }
+
+    .tabs button.active {
+      background: var(--accent);
+      color: var(--accent-fg);
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(245, 158, 11, 0.25);
+    }
+
+    /* Add this to your CSS */
+    .toggle {
+      display: flex;
+      gap: 8px;
+      margin-top: 16px;
+      padding: 4px;
+      background: var(--input-bg);
+      border-radius: 14px;
+      border: 1px solid var(--border);
+    }
+
+    .toggle button {
+      flex: 1;
+      padding: 10px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      background: transparent;
+      color: var(--muted);
+      transition: all 0.2s ease;
+    }
+
+    .toggle button.active {
+      background: var(--card);
+      /* Uses card color for "selected" look */
+      color: var(--accent);
+      font-weight: 700;
+      box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+    }
+
+    /* Optional: Dark mode adjustment for the active button */
+    body.dark .toggle button.active {
+      background: var(--accent);
+      color: var(--accent-fg);
+    }
+
+    /* 11. List & History Styling */
+    .set-line {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px solid var(--border);
+      font-size: 0.95rem;
+    }
+
+    .set-line:last-child {
+      border-bottom: none;
+    }
+
+    .best-set {
+      color: var(--accent);
+      font-weight: 700;
+    }
+
+    /* 12. Modal & Utilities */
+    #modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0, 0, 0, 0.6);
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+      backdrop-filter: blur(4px);
+      z-index: 100;
+    }
+
+    .sheet {
+      background: var(--card);
+      width: 100%;
+      max-width: 600px;
+      padding: 24px;
+      border-radius: 24px 24px 0 0;
+      box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.2);
+      animation: slideUp 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+    }
+
+    @keyframes slideUp {
+      from {
+        transform: translateY(100%);
+      }
+
+      to {
+        transform: translateY(0);
+      }
+    }
+
+    .set {
+      display: flex;
+      gap: 10px;
+      margin-top: 8px;
+    }
+
+    /* Toggle Switch */
+    .switch {
+      position: relative;
+      width: 50px;
+      height: 28px;
+    }
+
+    .switch input {
+      display: none;
+    }
+
+    .slider {
+      position: absolute;
+      inset: 0;
+      background: var(--border);
+      border-radius: 34px;
+      transition: .3s;
+      cursor: pointer;
+    }
+
+    .slider:before {
+      content: "";
+      position: absolute;
+      height: 22px;
+      width: 22px;
+      left: 3px;
+      bottom: 3px;
+      background: white;
+      border-radius: 50%;
+      transition: .3s;
+      box-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+    }
+
+    input:checked+.slider {
+      background: var(--accent);
+    }
+
+    input:checked+.slider:before {
+      transform: translateX(22px);
+    }
+
+    /* Table Styles */
+    table {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 8px;
+    }
+
+    th {
+      text-align: left;
+      font-size: 0.75rem;
+      text-transform: uppercase;
+      color: var(--muted);
+      border-bottom: 2px solid var(--border);
+      padding: 8px 4px;
+    }
+
+    td {
+      padding: 12px 4px;
+      border-bottom: 1px solid var(--border);
+      font-variant-numeric: tabular-nums;
+    }
+
+    /* --- NUTRITION SPECIFIC STYLES --- */
+    .macro-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr 1fr;
+      gap: 8px;
+      margin-bottom: 16px;
+    }
+
+    .macro-card {
+      background: var(--input-bg);
+      padding: 12px;
+      border-radius: 12px;
+      text-align: center;
+      border: 1px solid var(--border);
+    }
+
+    .macro-val {
+      display: block;
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--text);
+    }
+
+    .macro-label {
+      font-size: 0.75rem;
+      color: var(--muted);
+      text-transform: uppercase;
+    }
+
+    /* Different colors for macros */
+    .mc-cal {
+      color: var(--accent);
+    }
+
+    .mc-pro {
+      color: #3B82F6;
+    }
+
+    /* Blue */
+    .mc-carb {
+      color: #10B981;
+    }
+
+    /* Green */
+    .mc-fat {
+      color: #EF4444;
+    }
+
+    /* Red */
+
+    .meal-item-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.9rem;
+      padding: 4px 0;
+      border-bottom: 1px dashed var(--border);
+    }
+
+    .meal-item-row:last-child {
+      border-bottom: none;
+    }
+
+    /* Food Item Row in Modal */
+    .food-row {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 8px;
+      align-items: center;
+    }
+
+    .food-row select {
+      flex: 2;
+      margin: 0;
+    }
+
+    .food-row input {
+      flex: 1;
+      margin: 0;
+    }
+
+    .food-row button {
+      width: auto;
+      padding: 0 10px;
+      margin: 0;
+      background: var(--input-bg);
+      border: 1px solid var(--border);
+      color: var(--muted);
+    }
+  </style>
+
+  <!-- Firebase SDK -->
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.7.1/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut }
+      from "https://www.gstatic.com/firebasejs/10.7.1/firebase-auth.js";
+    import { getFirestore, doc, getDoc, setDoc }
+      from "https://www.gstatic.com/firebasejs/10.7.1/firebase-firestore.js";
+
+    const firebaseConfig = {
+      apiKey: "AIzaSyClkqSLVO9KbV0RdQWXnjcuxS7mFFOsARY",
+      authDomain: "workout-tracker-1c61f.firebaseapp.com",
+      projectId: "workout-tracker-1c61f",
+      storageBucket: "workout-tracker-1c61f.firebasestorage.app",
+      messagingSenderId: "718770745731",
+      appId: "1:718770745731:web:45e4f9498a5e3dc70a06b6",
+      measurementId: "G-7P1QTCG7QF"
+    };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    window.fb = { auth, db, onAuthStateChanged, signInWithEmailAndPassword, createUserWithEmailAndPassword, signOut, doc, getDoc, setDoc };
+
+
+
+
+  </script>
 </head>
+
 <body>
 
-<header>
-  <button onclick="changeDay(-1)">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"></polyline></svg>
-  </button>
+  <header>
+    <button onclick="changeDay(-1)">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="15 18 9 12 15 6"></polyline>
+      </svg>
+    </button>
 
-  <div class="date-wrap">
-    <input type="date" id="date">
-    <span id="dayName"></span>
-  </div>
+    <div class="date-wrap">
+      <input type="date" id="date">
+      <span id="dayName"></span>
+    </div>
 
-  <button onclick="changeDay(1)">
-    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
-  </button>
-</header>
-<nav class="tabs">
-  <button class="active" onclick="showTab('log',this)">Log</button>
-  <button onclick="showTab('manage',this)">Manage</button>
-  <button onclick="showTab('analytics',this)">Analytics</button>
-  <button onclick="showTab('history',this)">History</button>
-  <button onclick="showTab('account',this)">Account</button>
-</nav>
+    <button onclick="changeDay(1)">
+      <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+        stroke-linecap="round" stroke-linejoin="round">
+        <polyline points="9 18 15 12 9 6"></polyline>
+      </svg>
+    </button>
+  </header>
+  <nav class="tabs">
+    <button class="active" onclick="showTab('log',this)">Log</button>
+    <button onclick="showTab('nutrition',this)">Nutrition</button>
+    <button onclick="showTab('manage',this)">Manage</button>
+    <button onclick="showTab('analytics',this)">Analytics</button>
+    <button onclick="showTab('history',this)">History</button>
+    <button onclick="showTab('account',this)">Account</button>
+  </nav>
+  <section id="log" class="view active">
+    <button class="primary" onclick="openLog()">+ Log Exercise</button>
+    <div id="logList"></div>
+  </section>
 
-<section id="log" class="view active">
-  <button class="primary" onclick="openLog()">+ Log Exercise</button>
-  <div id="logList"></div>
-</section>
+  <section id="nutrition" class="view">
+    <!-- Daily Summary -->
+    <div class="card">
+      <div style="display:flex; justify-content:space-between; align-items:center;">
+        <h3 style="margin:0;">Daily Goals</h3>
+      </div>
 
-<section id="manage" class="view">
- <div class="card">
-  <h4>Add / Rename Muscle</h4>
-  <select id="muscleSelect"></select>
-  <input id="muscleInput" placeholder="Muscle name">
-  <button class="primary" onclick="addMuscle()">Add Muscle</button>
-  <button class="secondary" onclick="renameMuscle()">Rename Selected</button>
-</div>
+      <div class="macro-grid" style="margin-top:16px;">
+        <div class="macro-card">
+          <span class="macro-val mc-cal" id="totalCal">0</span>
+          <span class="macro-label">Cals</span>
+        </div>
+        <div class="macro-card">
+          <span class="macro-val mc-pro" id="totalPro">0</span>
+          <span class="macro-label">Protein</span>
+        </div>
+        <div class="macro-card">
+          <span class="macro-val mc-carb" id="totalCarb">0</span>
+          <span class="macro-label">Carbs</span>
+        </div>
+        <div class="macro-card">
+          <span class="macro-val mc-fat" id="totalFat">0</span>
+          <span class="macro-label">Fats</span>
+        </div>
+      </div>
+
+      <button class="primary" onclick="openMealModal()">+ Log Meal</button>
+    </div>
+
+    <!-- Actions -->
+    <div style="display:flex; justify-content:flex-end; margin-bottom:16px;">
+      <button class="secondary" style="width:auto; font-size:0.85rem;" onclick="toggleFoodCreator()">+ Create New Food
+        Item</button>
+    </div>
+
+    <!-- Food Creator (Hidden by default) -->
+    <div id="foodCreator" class="card" style="display:none; border: 2px dashed var(--accent);">
+      <h4>🥑 Create New Food</h4>
+      <input id="newFoodName" placeholder="Food Name (e.g., Banana)">
+      <div class="macro-grid" style="margin-top:8px;">
+        <input type="number" id="newFoodCal" placeholder="kcal/100g">
+        <input type="number" id="newFoodPro" placeholder="P (g)">
+        <input type="number" id="newFoodCarb" placeholder="C (g)">
+        <input type="number" id="newFoodFat" placeholder="F (g)">
+      </div>
+      <div class="actions">
+        <button class="primary" onclick="createNewFood()">Save Food</button>
+        <button class="secondary" onclick="toggleFoodCreator()">Cancel</button>
+      </div>
+    </div>
+
+    <!-- Daily Log List -->
+    <h4 class="muted">Today's Meals</h4>
+    <div id="dailyMealsList"></div>
+  </section>
+
+  <section id="manage" class="view">
+    <div class="card">
+      <h4>Add / Rename Muscle</h4>
+      <select id="muscleSelect"></select>
+      <input id="muscleInput" placeholder="Muscle name">
+      <button class="primary" onclick="addMuscle()">Add Muscle</button>
+      <button class="secondary" onclick="renameMuscle()">Rename Selected</button>
+    </div>
 
 
- <div class="card">
-  <h4>Add / Rename Exercise</h4>
-  <select id="exerciseMuscle"></select>
-  <select id="exerciseSelect"></select>
-  <input id="exerciseInput" placeholder="Exercise name">
-  <button class="primary" onclick="addExercise()">Add Exercise</button>
-  <button class="secondary" onclick="renameExercise()">Rename Selected</button>
-</div>
+    <div class="card">
+      <h4>Add / Rename Exercise</h4>
+      <select id="exerciseMuscle"></select>
+      <select id="exerciseSelect"></select>
+      <input id="exerciseInput" placeholder="Exercise name">
+      <button class="primary" onclick="addExercise()">Add Exercise</button>
+      <button class="secondary" onclick="renameExercise()">Rename Selected</button>
+    </div>
 
-</section>
+    <div class="card">
+      <h4>✏️ Edit Food Details</h4>
+      <select id="manageFoodSelect" onchange="loadFoodToEdit()"></select>
+      <div class="macro-grid" style="margin-top:8px;">
+        <input type="number" id="editFoodCal" placeholder="kcal">
+        <input type="number" id="editFoodPro" placeholder="P">
+        <input type="number" id="editFoodCarb" placeholder="C">
+        <input type="number" id="editFoodFat" placeholder="F">
+      </div>
+      <button class="primary" onclick="updateFood()">Update Food</button>
+    </div>
 
-<section id="analytics" class="view">
-  <div class="card"><select id="aMuscle"></select><select id="aExercise"></select>
-    <div class="toggle">
-      <button class="active" onclick="setMetric('max',this)">Max</button>
-      <button onclick="setMetric('volume',this)">Volume</button>
-      <button onclick="setMetric('1rm',this)">1RM</button>
+    <div class="card">
+      <h4>🍱 Create Meal Template</h4>
+      <input id="templateName" placeholder="Template Name (e.g., Oats & Milk)">
+      <div id="templateIngredients" style="margin:8px 0;"></div>
+      <button class="secondary" onclick="addTemplateRow()">+ Add Food Item</button>
+      <button class="primary" onclick="saveTemplate()">Save Template</button>
+    </div>
+
+  </section>
+
+  <section id="analytics" class="view">
+    <div class="card">
+      <div style="margin-bottom:12px">
+        <label>Mode:</label>
+        <div class="toggle" style="margin-top:4px">
+          <button class="active" onclick="switchAnalyticsMode('workout',this)">Workout</button>
+          <button onclick="switchAnalyticsMode('nutrition',this)">Nutrition</button>
+        </div>
+      </div>
+
+      <div id="workoutControls">
+        <select id="aMuscle"></select><select id="aExercise"></select>
+        <div class="toggle">
+          <button class="active" onclick="setMetric('max',this)">Max</button>
+          <button onclick="setMetric('volume',this)">Volume</button>
+          <button onclick="setMetric('1rm',this)">1RM</button>
+        </div>
+      </div>
+
+      <div id="nutritionControls" style="display:none;">
+        <label style="display:block; margin-bottom:4px; font-size:0.9rem; color:var(--muted);">Choose Calories or
+          Macro:</label>
+        <select id="nutriMetricSelect" onchange="setNutriMetric(this.value)"
+          style="width:100%; margin-bottom:12px; padding:10px; border-radius:8px; border:1px solid var(--border); background:var(--input-bg); color:var(--text); font-size:1rem;">
+          <option value="c">Calories</option>
+          <option value="p">Protein (g)</option>
+          <option value="cb">Carbs (g)</option>
+          <option value="f">Fat (g)</option>
+        </select>
+
+        <div id="nutriStats" style="display:flex; justify-content:space-between; margin-bottom:20px;">
+          <div>
+            <div id="nutriWeeklyTotal" style="font-size:1.5rem; font-weight:700;">0</div>
+            <div class="muted" style="font-size:0.8rem;">Weekly Total</div>
+          </div>
+          <div style="text-align:right;">
+            <div id="nutriDailyAvg" style="font-size:1.5rem; font-weight:700;">0</div>
+            <div class="muted" style="font-size:0.8rem;">Average Per Day</div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div style="height:300px"><canvas id="chartCanvas"></canvas></div>
+  </section>
+
+  <section id="history" class="view">
+    <select id="hMuscle" onchange="renderHistory()"></select>
+    <div id="historyList"></div>
+  </section>
+
+  <section id="account" class="view">
+    <div class="card account-box">
+      <h3>Account</h3>
+      <input id="email" placeholder="Email">
+      <input id="password" type="password" placeholder="Password">
+      <div id="authMsg" class="muted"></div>
+
+      <button class="primary" onclick="login()">Login</button>
+      <button class="secondary" onclick="register()">Create Account</button>
+      <button class="secondary" onclick="logout()" id="logoutBtn" style="display:none">Logout</button>
+    </div>
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <span>Dark Mode</span>
+        <label class="switch">
+          <input type="checkbox" id="darkToggle">
+          <span class="slider"></span>
+        </label>
+      </div>
+    </div>
+
+  </section>
+
+  <div id="nutriModal" style="display:none;" class="modal-overlay">
+    <div
+      style="position:fixed; inset:0; background:rgba(0,0,0,0.6); display:flex; align-items:flex-end; justify-content:center; z-index:100;">
+      <div class="sheet">
+        <h4>🍽 Log Meal</h4>
+
+        <div style="display:flex; gap:8px; margin-bottom:12px;">
+          <select id="premadeSelect" onchange="loadPremadeMeal()" style="margin-top:0;">
+            <option value="">Load Premade Meal...</option>
+          </select>
+        </div>
+
+        <div style="display:flex; gap:8px;">
+          <input type="time" id="mealTime" style="flex:1;">
+          <input type="text" id="mealName" placeholder="Meal Name" style="flex:2;">
+        </div>
+
+        <div id="mealIngredients" style="margin: 16px 0;"></div>
+
+        <button class="secondary" onclick="addIngredientRow()">+ Add Food Item</button>
+
+        <div
+          style="margin-top:16px; padding-top:12px; border-top:1px solid var(--border); text-align:right; font-size:0.9rem;"
+          class="muted">
+          Total: <span id="mealLiveCal">0</span> kcal
+        </div>
+
+        <div class="actions">
+          <button class="primary" onclick="saveMealLog()">Save Meal</button>
+          <button class="secondary" onclick="closeNutriModal()">Cancel</button>
+        </div>
+      </div>
     </div>
   </div>
-  <canvas id="chartCanvas" height="200"></canvas>
-</section>
 
-<section id="history" class="view">
-  <select id="hMuscle" onchange="renderHistory()"></select>
-  <div id="historyList"></div>
-</section>
+  <div id="modal">
+    <div class="sheet">
+      <select id="logMuscle" onchange="loadLogExercises()"></select>
+      <select id="logExercise"></select>
 
-<section id="account" class="view">
-  <div class="card account-box">
-    <h3>Account</h3>
-    <input id="email" placeholder="Email">
-    <input id="password" type="password" placeholder="Password">
-<div id="authMsg" class="muted"></div>
+      <div id="sets"></div>
 
-    <button class="primary" onclick="login()">Login</button>
-    <button class="secondary" onclick="register()">Create Account</button>
-    <button class="secondary" onclick="logout()" id="logoutBtn" style="display:none">Logout</button>
+
+      <textarea id="logNote" placeholder="📝 Notes (e.g., drop sets, pain level, RPE...)"
+        style="width:100%; margin:12px 0; padding:12px; border-radius:12px; border:1px solid var(--border); background:var(--input-bg); color:var(--text); font-family:inherit; resize:none;"
+        rows="2"></textarea>
+
+      <button class="secondary" onclick="prefillFromHistory()">Use Last Weights</button>
+      <button class="secondary" onclick="addSet()">+ Add Set</button>
+      <button class="primary" onclick="saveLog()">Save</button>
+      <button class="secondary" onclick="closeLog()">Cancel</button>
+    </div>
   </div>
-<div class="card">
-  <div style="display:flex;justify-content:space-between;align-items:center">
-    <span>Dark Mode</span>
-    <label class="switch">
-      <input type="checkbox" id="darkToggle">
-      <span class="slider"></span>
-    </label>
-  </div>
-</div>
 
-</section>
+  <script type="module">
+    /* ===== APP LOGIC (CLEAN FINAL) ===== */
+    let muscles = ["Chest", "Back", "Legs", "Shoulders", "Arms"];
+    let exercises = { Chest: ["Bench Press"], Back: ["Row"], Legs: ["Squat"], Shoulders: ["OHP"], Arms: ["Curl"] };
+    /* --- NUTRITION DATA --- */
+    let foods = {
+      "Chicken Breast": { c: 165, p: 31, cb: 0, f: 3.6 },
+      "Rice (White)": { c: 130, p: 2.7, cb: 28, f: 0.3 },
+      "Raw Egg": { c: 155, p: 13, cb: 1.1, f: 11 },
+      "Banana": { c: 89, p: 1.1, cb: 23, f: 0.3 },
+      "Milk (whole)": { c: 61, p: 3.2, cb: 4.8, f: 3.3 },
+      "Roti (whole wheat)": { c: 297, p: 9, cb: 49, f: 7.5 },
+      "Cooked White Rice": { c: 130, p: 2.4, cb: 28, f: 0.3 },
+      "Cooked Brown Rice": { c: 112, p: 2.6, cb: 23, f: 0.9 },
+      "Oats (raw)": { c: 389, p: 16.9, cb: 66.3, f: 6.9 },
+      "Raisins": { c: 299, p: 3.1, cb: 79, f: 0.5 },
+      "Peanut Butter": { c: 588, p: 25, cb: 20, f: 50 },
+      "Boiled White Peas": { c: 118, p: 8.3, cb: 21, f: 0.6 },
+      "Cooked Dal": { c: 116, p: 9, cb: 20, f: 3.3 },
+      "Khichdi": { c: 120, p: 4, cb: 20, f: 3 },
+      "Cooked Chole Sabji": { c: 164, p: 9, cb: 27, f: 3 },
+      "Cooked Rajma Sabji": { c: 140, p: 9, cb: 24, f: 2.5 }
+    };
+    let nutriLogs = {}; // Format: "YYYY-MM-DD": [ { time, name, items: [{food, g}] } ]
+    let mealTemplates = {};
+    let logs = {};
+    let currentDate = new Date().toISOString().split("T")[0];
+    date.value = currentDate;
+    updateDayName();
+    let metric = "max", chart, editIndex = null, currentUserId = null;
 
-<div id="modal"><div class="sheet">
-  <select id="logMuscle" onchange="loadLogExercises()"></select>
-  <select id="logExercise"></select>
-  
-  <div id="sets"></div>
+    /* ---------- AUTH ---------- */
+    fb.onAuthStateChanged(fb.auth, async user => {
+      if (user) {
+        currentUserId = user.uid;
+        logoutBtn.style.display = "block";
+        const snap = await fb.getDoc(fb.doc(fb.db, "users", currentUserId));
+        if (snap.exists()) {
+          const data = snap.data();
+          muscles = data.muscles || muscles;
+          exercises = data.exercises || exercises;
+          logs = data.logs || {};
+          foods = { ...foods, ...(data.foods || {}) };
+          nutriLogs = data.nutriLogs || {};
+          mealTemplates = data.mealTemplates || {};
 
-  <textarea id="logNote" placeholder="📝 Notes (e.g., drop sets, pain level, RPE...)" 
-    style="width:100%; margin:12px 0; padding:12px; border-radius:12px; border:1px solid var(--border); background:var(--input-bg); color:var(--text); font-family:inherit; resize:none;" 
-    rows="2"></textarea>
+          saveToStorage();
+          refreshSelectors();
+          renderLog();
+        }
+      } else {
+        currentUserId = null;
+        logoutBtn.style.display = "none";
+      }
+    });
 
-  <button class="secondary" onclick="prefillFromHistory()">Use Last Weights</button>
-  <button class="secondary" onclick="addSet()">+ Add Set</button>
-  <button class="primary" onclick="saveLog()">Save</button>
-  <button class="secondary" onclick="closeLog()">Cancel</button>
-</div></div>
+    window.login = async function () {
+      authMsg.textContent = "";
 
-<script type="module">
-/* ===== APP LOGIC (CLEAN FINAL) ===== */
-let muscles=["Chest","Back","Legs","Shoulders","Arms"];
-let exercises={Chest:["Bench Press"],Back:["Row"],Legs:["Squat"],Shoulders:["OHP"],Arms:["Curl"]};
-let logs={};
-let currentDate=new Date().toISOString().split("T")[0];
-date.value=currentDate;
-updateDayName();
-let metric="max", chart, editIndex=null, currentUserId=null;
+      try {
+        await fb.signInWithEmailAndPassword(
+          fb.auth,
+          email.value,
+          password.value
+        );
+      } catch (err) {
+        if (err.code === "auth/wrong-password" || err.code === "auth/user-not-found") {
+          authMsg.textContent = "Invalid email or password";
+        } else if (err.code === "auth/invalid-email") {
+          authMsg.textContent = "Invalid email format";
+        } else {
+          authMsg.textContent = "Login failed. Try again.";
+        }
+      }
+    };
+    window.register = async function () {
+      authMsg.textContent = "";
 
-/* ---------- AUTH ---------- */
-fb.onAuthStateChanged(fb.auth, async user=>{
-  if(user){
-    currentUserId=user.uid;
-    logoutBtn.style.display="block";
-    const snap=await fb.getDoc(fb.doc(fb.db,"users",currentUserId));
-    if(snap.exists()){
-      ({muscles,exercises,logs}=snap.data());
-      saveToStorage();
-      refreshSelectors();
+      try {
+        await fb.createUserWithEmailAndPassword(
+          fb.auth,
+          email.value,
+          password.value
+        );
+      } catch (err) {
+        if (err.code === "auth/email-already-in-use") {
+          authMsg.textContent = "Account already exists";
+        } else if (err.code === "auth/weak-password") {
+          authMsg.textContent = "Password should be at least 6 characters";
+        } else {
+          authMsg.textContent = "Registration failed";
+        }
+      }
+    };
+    window.logout = async () => {
+      await fb.signOut(fb.auth);
+      muscles = []; exercises = {}; logs = {};
+      localStorage.clear();
+      refreshSelectors(); renderLog();
+    };
+
+    /* ---------- STORAGE ---------- */
+    // Update saveToStorage
+    function saveToStorage() {
+      localStorage.setItem("workout", JSON.stringify({ muscles, exercises, logs, foods, nutriLogs, mealTemplates }));
+    }
+
+    // Update loadFromStorage
+    function loadFromStorage() {
+      const d = JSON.parse(localStorage.getItem("workout"));
+      if (d) {
+        muscles = d.muscles || muscles;
+        exercises = d.exercises || exercises;
+        logs = d.logs || {};
+        // Merge hardcoded foods with stored ones so new items appear
+        foods = { ...foods, ...(d.foods || {}) };
+        nutriLogs = d.nutriLogs || {};
+        mealTemplates = d.mealTemplates || {};
+      }
+    }
+
+    // Update saveToFirebase
+    async function saveToFirebase() {
+      if (!currentUserId) return;
+      await fb.setDoc(fb.doc(fb.db, "users", currentUserId), { muscles, exercises, logs, foods, nutriLogs, mealTemplates });
+    }
+
+
+
+
+    /* ---------- UI ---------- */
+    function showTab(t, b) {
+      document.querySelectorAll('.view').forEach(v => v.classList.remove('active'));
+      document.querySelectorAll('.tabs button').forEach(x => x.classList.remove('active'));
+      document.getElementById(t).classList.add('active');
+      b.classList.add('active');
+      if (t === "analytics") renderAnalytics();
+      if (t === "history") renderHistory();
+      if (t === "nutrition") renderNutrition();
+    }
+    function changeDay(n) {
+      let d = new Date(currentDate); d.setDate(d.getDate() + n); currentDate = d.toISOString().split("T")[0]; date.value = currentDate;
+      updateDayName();
       renderLog();
     }
-  } else {
-    currentUserId=null;
-    logoutBtn.style.display="none";
-  }
-});
+    function getMonthStats(viewDateStr) {
+      const viewDate = new Date(viewDateStr);
+      const year = viewDate.getFullYear();
+      const month = viewDate.getMonth();
 
-window.login = async function () {
-  authMsg.textContent = "";
+      let workoutDays = 0;
+      let restDays = 0;
 
-  try {
-    await fb.signInWithEmailAndPassword(
-      fb.auth,
-      email.value,
-      password.value
-    );
-  } catch (err) {
-    if (err.code === "auth/wrong-password" || err.code === "auth/user-not-found") {
-      authMsg.textContent = "Invalid email or password";
-    } else if (err.code === "auth/invalid-email") {
-      authMsg.textContent = "Invalid email format";
-    } else {
-      authMsg.textContent = "Login failed. Try again.";
+      // Get total days in the month (e.g., 28 for Feb)
+      const daysInMonth = new Date(year, month + 1, 0).getDate();
+      // We only count up to the "viewDay" (the date currently selected)
+      const currentSelectedDay = viewDate.getDate();
+
+      for (let d = 1; d <= currentSelectedDay; d++) {
+        // Format date to match your logs keys (YYYY-MM-DD)
+        const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
+
+        if (logs[dateKey] && logs[dateKey].length > 0) {
+          workoutDays++;
+        } else {
+          restDays++;
+        }
+      }
+
+      return { workoutDays, restDays };
+    } function isFutureDate(d) {
+      const today = new Date().toISOString().split("T")[0];
+      return d > today;
     }
-  }
-};
-window.register = async function () {
-  authMsg.textContent = "";
 
-  try {
-    await fb.createUserWithEmailAndPassword(
-      fb.auth,
-      email.value,
-      password.value
-    );
-  } catch (err) {
-    if (err.code === "auth/email-already-in-use") {
-      authMsg.textContent = "Account already exists";
-    } else if (err.code === "auth/weak-password") {
-      authMsg.textContent = "Password should be at least 6 characters";
-    } else {
-      authMsg.textContent = "Registration failed";
+    function isRestDay(d) {
+      if (isFutureDate(d)) return false;      // 🔑 ignore future
+      return !logs[d] || logs[d].length === 0;
     }
-  }
-};
-window.logout=async()=>{
-  await fb.signOut(fb.auth);
-  muscles=[];exercises={};logs={};
-  localStorage.clear();
-  refreshSelectors();renderLog();
-};
 
-/* ---------- STORAGE ---------- */
-function saveToStorage(){localStorage.setItem("workout",JSON.stringify({muscles,exercises,logs}));}
-function loadFromStorage(){const d=JSON.parse(localStorage.getItem("workout"));if(d){muscles=d.muscles;exercises=d.exercises;logs=d.logs||{};}}
-async function saveToFirebase(){if(!currentUserId) return;await fb.setDoc(fb.doc(fb.db,"users",currentUserId),{muscles,exercises,logs});}
+    function renderLog() {
+      const hasLogs = (logs[currentDate] || []).length > 0;
 
-/* ---------- UI ---------- */
-function showTab(t,b){document.querySelectorAll('.view').forEach(v=>v.classList.remove('active'));document.querySelectorAll('.tabs button').forEach(x=>x.classList.remove('active'));document.getElementById(t).classList.add('active');b.classList.add('active');if(t==="analytics")renderAnalytics();if(t==="history")renderHistory();}
-function changeDay(n){let d=new Date(currentDate);d.setDate(d.getDate()+n);currentDate=d.toISOString().split("T")[0];date.value=currentDate;
-updateDayName();
-renderLog();
-}
-function getMonthStats(viewDateStr) {
-  const viewDate = new Date(viewDateStr);
-  const year = viewDate.getFullYear();
-  const month = viewDate.getMonth();
-  
-  let workoutDays = 0;
-  let restDays = 0;
+      // 1. Toggle Header Underline (Visual indicator)
+      document.querySelector("header").classList.toggle("done-today", hasLogs);
 
-  // Get total days in the month (e.g., 28 for Feb)
-  const daysInMonth = new Date(year, month + 1, 0).getDate();
-  // We only count up to the "viewDay" (the date currently selected)
-  const currentSelectedDay = viewDate.getDate();
+      const stats = getMonthStats(currentDate);
+      const isRest = isRestDay(currentDate);
 
-  for (let d = 1; d <= currentSelectedDay; d++) {
-    // Format date to match your logs keys (YYYY-MM-DD)
-    const dateKey = `${year}-${String(month + 1).padStart(2, '0')}-${String(d).padStart(2, '0')}`;
-    
-    if (logs[dateKey] && logs[dateKey].length > 0) {
-      workoutDays++;
-    } else {
-      restDays++;
-    }
-  }
-
-  return { workoutDays, restDays };
-}function isFutureDate(d) {
-  const today = new Date().toISOString().split("T")[0];
-  return d > today;
-}
-
-function isRestDay(d) {
-  if (isFutureDate(d)) return false;      // 🔑 ignore future
-  return !logs[d] || logs[d].length === 0;
-}
-
-function renderLog() {
-  const hasLogs = (logs[currentDate] || []).length > 0;
-  
-  // 1. Toggle Header Underline (Visual indicator)
-  document.querySelector("header").classList.toggle("done-today", hasLogs);
-
-  const stats = getMonthStats(currentDate);
-  const isRest = isRestDay(currentDate);
-
-  // 2. Start building HTML with Month Stats
-  let html = `
+      // 2. Start building HTML with Month Stats
+      let html = `
     <div class="muted" style="text-align:center; margin-bottom:16px; font-size:0.85rem;">
       Month: <b style="color:var(--text)">${stats.workoutDays} Work</b> · <b style="color:var(--muted)">${stats.restDays} Rest</b>
     </div>
   `;
 
-  // 3. Conditional Rendering
-  if (isRest) {
-    // ✨ PRETTY REST DAY CARD ✨
-    // This creates a centered, dashed card with a "Battery" icon
-    html += `
+      // 3. Conditional Rendering
+      if (isRest) {
+        // ✨ PRETTY REST DAY CARD ✨
+        // This creates a centered, dashed card with a "Battery" icon
+        html += `
       <div class="card" style="
         display: flex; 
         flex-direction: column; 
@@ -540,414 +1047,525 @@ function renderLog() {
         </p>
       </div>
     `;
-  } else {
-    // 🏋️ ACTIVE LOGS
-    html += `<div class="muted" style="margin-bottom:8px; font-weight:600; font-size:0.9rem;">
-      🔥 Today's Workout (${(logs[currentDate]||[]).length})
+      } else {
+        // 🏋️ ACTIVE LOGS
+        html += `<div class="muted" style="margin-bottom:8px; font-weight:600; font-size:0.9rem;">
+      🔥 Today's Workout (${(logs[currentDate] || []).length})
     </div>`;
 
-    (logs[currentDate] || []).forEach((e, i) => {
-      const isCardio = e.muscle === "Cardio";
-      const best = Math.max(...e.sets.map(s => s.w));
+        (logs[currentDate] || []).forEach((e, i) => {
+          const isCardio = e.muscle === "Cardio";
+          const best = Math.max(...e.sets.map(s => s.w));
 
-      html += `<div class='card'><div class='log-ribbon'>${e.muscle} – ${e.exercise}</div>`;
+          html += `<div class='card'><div class='log-ribbon'>${e.muscle} – ${e.exercise}</div>`;
 
-      // Sets Loop
-      e.sets.forEach((s, j) => {
-        let text = isCardio 
-          ? `🏃 ${s.w} km in ${s.r} min` 
-          : `${s.w} kg × ${s.r}`;
-        
-        let highlight = (!isCardio && s.w === best) ? 'best-set' : 'muted';
+          // Sets Loop
+          e.sets.forEach((s, j) => {
+            let text = isCardio
+              ? `🏃 ${s.w} km in ${s.r} min`
+              : `${s.w} kg × ${s.r}`;
 
-        html += `<div class="set-line ${highlight}">Set ${j + 1}: ${text}</div>`;
-      });
+            let highlight = (!isCardio && s.w === best) ? 'best-set' : 'muted';
 
-      // Note Section
-      if (e.note) {
-        html += `<div class="muted" style="margin-top:8px; padding-top:4px; border-top:1px dashed var(--border); font-style:italic;">📝 ${e.note}</div>`;
-      }
+            html += `<div class="set-line ${highlight}">Set ${j + 1}: ${text}</div>`;
+          });
 
-      // Action Buttons
-      html += `<div class='actions'>
+          // Note Section
+          if (e.note) {
+            html += `<div class="muted" style="margin-top:8px; padding-top:4px; border-top:1px dashed var(--border); font-style:italic;">📝 ${e.note}</div>`;
+          }
+
+          // Action Buttons
+          html += `<div class='actions'>
         <button class='icon-btn' onclick='openLog(${i})'>✏️ Edit</button>
         <button class='icon-btn' onclick='deleteLog(${i})'>🗑 Delete</button>
       </div></div>`;
-    });
-  }
-
-  logList.innerHTML = html;
-}function updateDayName() {
-  const d = new Date(currentDate);
-  const day = d.toLocaleDateString(undefined, { weekday: "long" });
-  dayName.textContent = day;
-}
-
-function refreshSelectors() {
-  [muscleSelect, logMuscle, aMuscle, hMuscle, exerciseMuscle].forEach(sel => {
-    sel.innerHTML = "";
-    muscles.forEach(m => sel.innerHTML += `<option>${m}</option>`);
-  });
-
-  // load exercises for logging
-  loadLogExercises();
-
-  // load exercises for rename
-  exerciseSelect.innerHTML = "";
-  (exercises[exerciseMuscle.value] || []).forEach(e =>
-    exerciseSelect.innerHTML += `<option>${e}</option>`
-  );
-}
-function addMuscle() {
-  const name = muscleInput.value.trim();
-
-  // ❌ Block empty / accidental submits
-  if (!name) {
-    muscleInput.focus();
-    return;
-  }
-
-  // ❌ Prevent duplicate muscles
-  if (exercises[name]) {
-    alert("Muscle already exists");
-    return;
-  }
-
-  exercises[name] = [];   // create muscle entry
-  muscles.push(name);     // <--- THIS WAS MISSING
-  muscleInput.value = "";
-
-  saveToStorage();
-  saveToFirebase();
-  refreshSelectors();
-}
-function addExercise() {
-  const muscle = exerciseMuscle.value;
-  const name = exerciseInput.value.trim();   // 🔑 trims spaces
-
-  // ❌ Block empty / accidental submits
-  if (!name) {
-    exerciseInput.focus();
-    return;
-  }
-
-  // ❌ Prevent duplicates (optional but recommended)
-  if (exercises[muscle]?.includes(name)) {
-    alert("Exercise already exists for this muscle");
-    return;
-  }
-
-  exercises[muscle] ??= [];
-  exercises[muscle].push(name);
-
-  exerciseInput.value = "";
-  saveToStorage();
-  saveToFirebase();
-  refreshSelectors();
-}
-window.renameMuscle = function () {
-  const oldName = muscleSelect.value;
-  const newName = muscleInput.value.trim();
-
-  if (!newName) {
-    alert("Enter a new muscle name");
-    return;
-  }
-
-  if (oldName === newName) return;
-
-  // update muscles list
-  const idx = muscles.indexOf(oldName);
-  if (idx !== -1) muscles[idx] = newName;
-
-  // move exercises
-  exercises[newName] = exercises[oldName] || [];
-  delete exercises[oldName];
-
-  // update logs
-  Object.values(logs).forEach(day =>
-    day.forEach(entry => {
-      if (entry.muscle === oldName) {
-        entry.muscle = newName;
+        });
       }
-    })
-  );
 
-  saveToStorage();
-  saveToFirebase();
-  refreshSelectors();
-  renderLog();
-
-  muscleInput.value = "";
-};
-
-window.renameExercise = function () {
-  const muscle = exerciseMuscle.value;
-  const oldName = exerciseSelect.value.trim();
-  const newName = exerciseInput.value.trim();
-
-  if (!newName) {
-    alert("Enter a new exercise name");
-    return;
-  }
-
-  if (oldName === newName) return;
-
-  const list = exercises[muscle];
-  const idx = list.indexOf(oldName);
-  if (idx !== -1) list[idx] = newName;
-
-  // update logs
-  Object.values(logs).forEach(day =>
-    day.forEach(entry => {
-      if (entry.muscle === muscle && entry.exercise === oldName) {
-        entry.exercise = newName;
-      }
-    })
-  );
-
-  saveToStorage();
-  saveToFirebase();
-  refreshSelectors();
-  renderLog();
-
-  exerciseInput.value = "";
-};
-
-function normalizeExercises() {
-  Object.keys(exercises).forEach(muscle => {
-    exercises[muscle] = exercises[muscle].map(e => e.trim());
-  });
-}
-
-
-
-exerciseMuscle.onchange = () => {
-  exerciseSelect.innerHTML = "";
-  (exercises[exerciseMuscle.value] || []).forEach(e =>
-    exerciseSelect.innerHTML += `<option>${e}</option>`
-  );
-};
-
-function openLog(i = null) {
-  editIndex = i;
-  modal.style.display = "flex";
-  sets.innerHTML = "";
-  
-  // Clear note initially
-  if(document.getElementById("logNote")) logNote.value = ""; 
-
-  if (i !== null) {
-    let e = logs[currentDate][i];
-    logMuscle.value = e.muscle;
-    
-    // Trigger placeholder update for Cardio/Normal
-    loadLogExercises(); 
-    
-    logExercise.value = e.exercise;
-    
-    // Load existing note
-    if(document.getElementById("logNote")) logNote.value = e.note || ""; 
-
-    e.sets.forEach(s => addSet(s.w, s.r));
-  } else {
-    // Default setup for new log
-    loadLogExercises();
-    addSet();
-  }
-}
-function closeLog(){modal.style.display="none";}
-function addSet(w = "", r = "") {
-  // Duplicate last set logic if empty
-  if (w === "" && r === "" && sets.children.length) {
-    const last = sets.lastElementChild;
-    w = last.children[0].value;
-    r = last.children[1].value;
-  }
-
-  const div = document.createElement("div");
-  div.className = "set";
-
-  // Check if Cardio to change placeholders
-  const isCardio = logMuscle.value === "Cardio";
-
-  const wInput = document.createElement("input");
-  wInput.placeholder = isCardio ? "Dist (km)" : "Weight"; 
-  wInput.type = "number";
-  wInput.inputMode = "decimal"; // allows 1.5 km
-  wInput.value = w;
-
-  const rInput = document.createElement("input");
-  rInput.placeholder = isCardio ? "Time (min)" : "Reps"; 
-  rInput.type = "number";
-  rInput.inputMode = "decimal"; // allows 30.5 min
-  rInput.value = r;
-
-  div.appendChild(wInput);
-  div.appendChild(rInput);
-  sets.appendChild(div);
-}window.prefillFromHistory = function () {
-  const m = logMuscle.value;
-  const e = logExercise.value;
-
-  if (!m || !e) return;
-
-  // clear sets safely (DOM way, not innerHTML)
-  while (sets.firstChild) {
-    sets.removeChild(sets.firstChild);
-  }
-
-  const dates = Object.keys(logs).sort().reverse();
-
-  for (const d of dates) {
-    for (const entry of logs[d]) {
-      if (entry.muscle === m && entry.exercise === e) {
-        entry.sets.forEach(s => addSet(s.w, s.r));
-        return;
-      }
+      logList.innerHTML = html;
+    } function updateDayName() {
+      const d = new Date(currentDate);
+      const day = d.toLocaleDateString(undefined, { weekday: "long" });
+      dayName.textContent = day;
     }
-  }
 
-  alert("No previous data for this exercise");
-};
-
-function loadLogExercises() {
-  // 1. Clear and refill the exercise dropdown
-  logExercise.innerHTML = "";
-  (exercises[logMuscle.value] || []).forEach(e => 
-    logExercise.innerHTML += `<option>${e}</option>`
-  );
-
-  // 2. Check if we are doing Cardio
-  const isCardio = logMuscle.value === "Cardio";
-  
-  // 3. Define the labels
-  const wLabel = isCardio ? "Dist (km)" : "Weight";
-  const rLabel = isCardio ? "Time (min)" : "Reps";
-
-  // 4. Update the placeholders for any sets currently on screen
-  const wInputs = document.querySelectorAll("#sets .set input:nth-child(1)");
-  const rInputs = document.querySelectorAll("#sets .set input:nth-child(2)");
-
-  wInputs.forEach(input => input.placeholder = wLabel);
-  rInputs.forEach(input => input.placeholder = rLabel);
-}
-function saveLog() {
-  logs[currentDate] ??= [];
-  
-  // Get the note value safely (if element exists)
-  const noteVal = document.getElementById("logNote") ? logNote.value.trim() : "";
-
-  const entry = {
-    muscle: logMuscle.value,
-    exercise: logExercise.value,
-    note: noteVal,  // <--- NEW: Saving the note
-    sets: [...sets.children].map(s => ({
-      w: +s.children[0].value,
-      r: +s.children[1].value
-    }))
-  };
-
-  if (editIndex !== null) logs[currentDate][editIndex] = entry;
-  else logs[currentDate].push(entry);
-
-  saveToStorage();
-  saveToFirebase();
-  editIndex = null;
-  closeLog();
-  renderLog();
-}
-
-date.onchange = () => {
-  currentDate = date.value;
-  updateDayName();
-  renderLog();
-};
-
-// Dark mode
-const darkToggle = document.getElementById("darkToggle");
-
-function applyTheme(isDark) {
-  document.body.classList.toggle("dark", isDark);
-  localStorage.setItem("darkMode", isDark ? "1" : "0");
-}
-
-darkToggle.onchange = () => {
-  applyTheme(darkToggle.checked);
-};
-
-// on load
-const savedTheme = localStorage.getItem("darkMode")
-  ? localStorage.getItem("darkMode") === "1"
-  : window.matchMedia("(prefers-color-scheme: dark)").matches;
-darkToggle.checked = savedTheme;
-applyTheme(savedTheme);
-
-
-function populateAnalyticsExercises(){aExercise.innerHTML="";(exercises[aMuscle.value]||[]).forEach(e=>aExercise.innerHTML+=`<option>${e}</option>`);}aMuscle.onchange=()=>{populateAnalyticsExercises();renderAnalytics();};aExercise.onchange=renderAnalytics;
-function setMetric(m,b){metric=m;document.querySelectorAll('.toggle button').forEach(x=>x.classList.remove('active'));b.classList.add('active');renderAnalytics();}
-function renderAnalytics(){let labels=[],data=[];Object.keys(logs).sort().forEach(d=>logs[d].forEach(e=>{if(e.exercise===aExercise.value){labels.push(d);if(metric==="max")data.push(Math.max(...e.sets.map(s=>s.w)));if(metric==="volume")data.push(e.sets.reduce((a,s)=>a+s.w*s.r,0));if(metric==="1rm")data.push(Math.max(...e.sets.map(s=>s.w*(1+s.r/30))));}}));chart?.destroy();chart=new Chart(chartCanvas,{type:'line',data:{labels,datasets:[{data,borderColor:'#E9B872'}]},options:{plugins:{legend:{display:false}}}});} 
-function renderHistory() {
-  historyList.innerHTML = "";
-  const selectedMuscle = hMuscle.value;
-  
-  // 1. Check if we are looking at Cardio history
-  const isCardio = selectedMuscle === "Cardio";
-
-  let lifetimeBests = {}; 
-
-  // 2. Loop through logs
-  Object.keys(logs).sort().reverse().forEach(d => {
-    let day = logs[d].filter(e => e.muscle === selectedMuscle);
-    if (!day.length) return;
-
-    historyList.innerHTML += `<div class='card log-ribbon'>${d}</div>`;
-    
-    day.forEach(e => {
-      // Calculate Best (Distance for Cardio, Weight for Strength)
-      let maxVal = Math.max(...e.sets.map(s => s.w));
-      let bestSet = e.sets.find(s => s.w === maxVal);
-
-      // Update Lifetime Best logic
-      if (!lifetimeBests[e.exercise] || 
-          maxVal > lifetimeBests[e.exercise].weight ||
-          (maxVal === lifetimeBests[e.exercise].weight && bestSet.r > lifetimeBests[e.exercise].reps)) {
-        
-        lifetimeBests[e.exercise] = { 
-          weight: maxVal, 
-          reps: bestSet.r, 
-          date: d 
-        };
-      }
-
-      let h = `<div class='card'><strong>${e.exercise}</strong>`;
-      
-      // A. Render Sets
-      e.sets.forEach((s, i) => {
-        let text = isCardio 
-          ? `🏃 ${s.w} km in ${s.r} min` 
-          : `${s.w} kg × ${s.r}`;
-          
-        let highlight = (!isCardio && s.w === maxVal) ? 'best-set' : 'muted';
-
-        h += `<div class='${highlight}'>Set ${i + 1}: ${text}</div>`;
+    function refreshSelectors() {
+      [muscleSelect, logMuscle, aMuscle, hMuscle, exerciseMuscle].forEach(sel => {
+        sel.innerHTML = "";
+        muscles.forEach(m => sel.innerHTML += `<option>${m}</option>`);
       });
 
-      // B. Render Note (NEW)
-      if (e.note) {
-         h += `<div class="muted" style="margin-top:8px; padding-top:4px; border-top:1px dashed var(--border); font-style:italic;">
-                 📝 ${e.note}
-               </div>`;
+      // Update Premade Dropdown
+      const preSel = document.getElementById('premadeSelect');
+      if (preSel) {
+        preSel.innerHTML = '<option value="">Load Premade Meal...</option>';
+        Object.keys(mealTemplates).sort().forEach(t => preSel.innerHTML += `<option>${t}</option>`);
       }
 
-      h += '</div>';
-      historyList.innerHTML += h;
-    });
-  });
+      refreshManageSelectors();
 
-  // 3. Render Lifetime Bests Table
-  if (Object.keys(lifetimeBests).length > 0) {
-    let bestsHTML = `
+      // load exercises for logging
+      loadLogExercises();
+
+      // load exercises for rename
+      exerciseSelect.innerHTML = "";
+      (exercises[exerciseMuscle.value] || []).forEach(e =>
+        exerciseSelect.innerHTML += `<option>${e}</option>`
+      );
+    }
+    function addMuscle() {
+      const name = muscleInput.value.trim();
+
+      // ❌ Block empty / accidental submits
+      if (!name) {
+        muscleInput.focus();
+        return;
+      }
+
+      // ❌ Prevent duplicate muscles
+      if (exercises[name]) {
+        alert("Muscle already exists");
+        return;
+      }
+
+      exercises[name] = [];   // create muscle entry
+      muscles.push(name);     // <--- THIS WAS MISSING
+      muscleInput.value = "";
+
+      saveToStorage();
+      saveToFirebase();
+      refreshSelectors();
+    }
+    function addExercise() {
+      const muscle = exerciseMuscle.value;
+      const name = exerciseInput.value.trim();   // 🔑 trims spaces
+
+      // ❌ Block empty / accidental submits
+      if (!name) {
+        exerciseInput.focus();
+        return;
+      }
+
+      // ❌ Prevent duplicates (optional but recommended)
+      if (exercises[muscle]?.includes(name)) {
+        alert("Exercise already exists for this muscle");
+        return;
+      }
+
+      exercises[muscle] ??= [];
+      exercises[muscle].push(name);
+
+      exerciseInput.value = "";
+      saveToStorage();
+      saveToFirebase();
+      refreshSelectors();
+    }
+    window.renameMuscle = function () {
+      const oldName = muscleSelect.value;
+      const newName = muscleInput.value.trim();
+
+      if (!newName) {
+        alert("Enter a new muscle name");
+        return;
+      }
+
+      if (oldName === newName) return;
+
+      // update muscles list
+      const idx = muscles.indexOf(oldName);
+      if (idx !== -1) muscles[idx] = newName;
+
+      // move exercises
+      exercises[newName] = exercises[oldName] || [];
+      delete exercises[oldName];
+
+      // update logs
+      Object.values(logs).forEach(day =>
+        day.forEach(entry => {
+          if (entry.muscle === oldName) {
+            entry.muscle = newName;
+          }
+        })
+      );
+
+      saveToStorage();
+      saveToFirebase();
+      refreshSelectors();
+      renderLog();
+
+      muscleInput.value = "";
+    };
+
+    window.renameExercise = function () {
+      const muscle = exerciseMuscle.value;
+      const oldName = exerciseSelect.value.trim();
+      const newName = exerciseInput.value.trim();
+
+      if (!newName) {
+        alert("Enter a new exercise name");
+        return;
+      }
+
+      if (oldName === newName) return;
+
+      const list = exercises[muscle];
+      const idx = list.indexOf(oldName);
+      if (idx !== -1) list[idx] = newName;
+
+      // update logs
+      Object.values(logs).forEach(day =>
+        day.forEach(entry => {
+          if (entry.muscle === muscle && entry.exercise === oldName) {
+            entry.exercise = newName;
+          }
+        })
+      );
+
+      saveToStorage();
+      saveToFirebase();
+      refreshSelectors();
+      renderLog();
+
+      exerciseInput.value = "";
+    };
+
+    function normalizeExercises() {
+      Object.keys(exercises).forEach(muscle => {
+        exercises[muscle] = exercises[muscle].map(e => e.trim());
+      });
+    }
+
+
+
+    exerciseMuscle.onchange = () => {
+      exerciseSelect.innerHTML = "";
+      (exercises[exerciseMuscle.value] || []).forEach(e =>
+        exerciseSelect.innerHTML += `<option>${e}</option>`
+      );
+    };
+
+    function openLog(i = null) {
+      editIndex = i;
+      modal.style.display = "flex";
+      sets.innerHTML = "";
+
+      // Clear note initially
+      if (document.getElementById("logNote")) logNote.value = "";
+
+      if (i !== null) {
+        let e = logs[currentDate][i];
+        logMuscle.value = e.muscle;
+
+        // Trigger placeholder update for Cardio/Normal
+        loadLogExercises();
+
+        logExercise.value = e.exercise;
+
+        // Load existing note
+        if (document.getElementById("logNote")) logNote.value = e.note || "";
+
+        e.sets.forEach(s => addSet(s.w, s.r));
+      } else {
+        // Default setup for new log
+        loadLogExercises();
+        addSet();
+      }
+    }
+    function closeLog() { modal.style.display = "none"; }
+    function addSet(w = "", r = "") {
+      // Duplicate last set logic if empty
+      if (w === "" && r === "" && sets.children.length) {
+        const last = sets.lastElementChild;
+        w = last.children[0].value;
+        r = last.children[1].value;
+      }
+
+      const div = document.createElement("div");
+      div.className = "set";
+
+      // Check if Cardio to change placeholders
+      const isCardio = logMuscle.value === "Cardio";
+
+      const wInput = document.createElement("input");
+      wInput.placeholder = isCardio ? "Dist (km)" : "Weight";
+      wInput.type = "number";
+      wInput.inputMode = "decimal"; // allows 1.5 km
+      wInput.value = w;
+
+      const rInput = document.createElement("input");
+      rInput.placeholder = isCardio ? "Time (min)" : "Reps";
+      rInput.type = "number";
+      rInput.inputMode = "decimal"; // allows 30.5 min
+      rInput.value = r;
+
+      div.appendChild(wInput);
+      div.appendChild(rInput);
+      sets.appendChild(div);
+    } window.prefillFromHistory = function () {
+      const m = logMuscle.value;
+      const e = logExercise.value;
+
+      if (!m || !e) return;
+
+      // clear sets safely (DOM way, not innerHTML)
+      while (sets.firstChild) {
+        sets.removeChild(sets.firstChild);
+      }
+
+      const dates = Object.keys(logs).sort().reverse();
+
+      for (const d of dates) {
+        for (const entry of logs[d]) {
+          if (entry.muscle === m && entry.exercise === e) {
+            entry.sets.forEach(s => addSet(s.w, s.r));
+            return;
+          }
+        }
+      }
+
+      alert("No previous data for this exercise");
+    };
+
+    function loadLogExercises() {
+      // 1. Clear and refill the exercise dropdown
+      logExercise.innerHTML = "";
+      (exercises[logMuscle.value] || []).forEach(e =>
+        logExercise.innerHTML += `<option>${e}</option>`
+      );
+
+      // 2. Check if we are doing Cardio
+      const isCardio = logMuscle.value === "Cardio";
+
+      // 3. Define the labels
+      const wLabel = isCardio ? "Dist (km)" : "Weight";
+      const rLabel = isCardio ? "Time (min)" : "Reps";
+
+      // 4. Update the placeholders for any sets currently on screen
+      const wInputs = document.querySelectorAll("#sets .set input:nth-child(1)");
+      const rInputs = document.querySelectorAll("#sets .set input:nth-child(2)");
+
+      wInputs.forEach(input => input.placeholder = wLabel);
+      rInputs.forEach(input => input.placeholder = rLabel);
+    }
+    function saveLog() {
+      logs[currentDate] ??= [];
+
+      // Get the note value safely (if element exists)
+      const noteVal = document.getElementById("logNote") ? logNote.value.trim() : "";
+
+      const entry = {
+        muscle: logMuscle.value,
+        exercise: logExercise.value,
+        note: noteVal,  // <--- NEW: Saving the note
+        sets: [...sets.children].map(s => ({
+          w: +s.children[0].value,
+          r: +s.children[1].value
+        }))
+      };
+
+      if (editIndex !== null) logs[currentDate][editIndex] = entry;
+      else logs[currentDate].push(entry);
+
+      saveToStorage();
+      saveToFirebase();
+      editIndex = null;
+      closeLog();
+      renderLog();
+    }
+
+    date.onchange = () => {
+      currentDate = date.value;
+      updateDayName();
+      renderLog();
+    };
+
+    // Dark mode
+    const darkToggle = document.getElementById("darkToggle");
+
+    function applyTheme(isDark) {
+      document.body.classList.toggle("dark", isDark);
+      localStorage.setItem("darkMode", isDark ? "1" : "0");
+    }
+
+    darkToggle.onchange = () => {
+      applyTheme(darkToggle.checked);
+    };
+
+    // on load
+    const savedTheme = localStorage.getItem("darkMode")
+      ? localStorage.getItem("darkMode") === "1"
+      : window.matchMedia("(prefers-color-scheme: dark)").matches;
+    darkToggle.checked = savedTheme;
+    applyTheme(savedTheme);
+
+
+
+    // ANALYTICS LOGIC
+    let analyticsMode = 'workout';
+    let nutriMetric = 'c';
+
+    function populateAnalyticsExercises() { aExercise.innerHTML = ""; (exercises[aMuscle.value] || []).forEach(e => aExercise.innerHTML += `<option>${e}</option>`); } aMuscle.onchange = () => { populateAnalyticsExercises(); renderAnalytics(); }; aExercise.onchange = renderAnalytics;
+    function setMetric(m, b) { metric = m; document.querySelectorAll('#workoutControls .toggle button').forEach(x => x.classList.remove('active')); b.classList.add('active'); renderAnalytics(); }
+    function setNutriMetric(m) { nutriMetric = m; renderAnalytics(); }
+
+    window.switchAnalyticsMode = (mode, btn) => {
+      analyticsMode = mode;
+      document.querySelectorAll('.card > div > .toggle button').forEach(x => x.classList.remove('active')); // Reset top toggle
+      btn.classList.add('active');
+
+      document.getElementById('workoutControls').style.display = mode === 'workout' ? 'block' : 'none';
+      document.getElementById('nutritionControls').style.display = mode === 'nutrition' ? 'block' : 'none';
+      renderAnalytics();
+    };
+
+    function renderAnalytics() {
+      const dates = Object.keys(logs).concat(Object.keys(nutriLogs)).filter((v, i, a) => a.indexOf(v) === i).sort();
+      let labels = [];
+      let data = [];
+      let chartType = 'line';
+      let chartOptions = { plugins: { legend: { display: false } }, scales: { y: { beginAtZero: true } } };
+
+      if (analyticsMode === 'workout') {
+        // ... existing workout logic ...
+        dates.forEach(d => {
+          if (logs[d]) {
+            logs[d].forEach(e => {
+              if (e.exercise === aExercise.value) {
+                labels.push(d);
+                if (metric === "max") data.push(Math.max(...e.sets.map(s => s.w)));
+                if (metric === "volume") data.push(e.sets.reduce((a, s) => a + s.w * s.r, 0));
+                if (metric === "1rm") data.push(Math.max(...e.sets.map(s => s.w * (1 + s.r / 30))));
+              }
+            });
+          }
+        });
+        // Deduplicate logic for graph (primitive) - keeping existing style
+      } else {
+        // Nutrition Logic - Last 7 Days
+        const last7 = [];
+
+        // Use consistent date generation logic (Matches currentDate initialization)
+        for (let i = 6; i >= 0; i--) {
+          const d = new Date();
+          d.setDate(d.getDate() - i);
+          const key = d.toISOString().split('T')[0];
+          last7.push(key);
+        }
+
+        // Populate Data
+        chartType = 'bar';
+        let grandTotal = 0;
+        let logsFound = 0;
+
+        last7.forEach(key => {
+          // Label generation (Format date nicely)
+          const dateObj = new Date(key + 'T00:00:00');
+          const dayName = dateObj.toLocaleDateString('en-US', { weekday: 'short' });
+          const dayNum = dateObj.getDate();
+          labels.push(`${dayName} ${dayNum}`);
+
+          let dayTotal = 0;
+
+          if (nutriLogs[key]) {
+            logsFound++;
+            nutriLogs[key].forEach(meal => {
+              meal.items.forEach(item => {
+                const f = foods[item.food];
+                if (f) dayTotal += f[nutriMetric] * (item.g / 100);
+              });
+            });
+          }
+          data.push(Math.round(dayTotal));
+          grandTotal += dayTotal;
+        });
+
+        // Update Stats UI
+        const unit = nutriMetric === 'c' ? ' Cal' : 'g';
+        // Debug: Show if data is missing
+        const debugText = logsFound > 0 ? "" : " (No Data)";
+        document.getElementById('nutriWeeklyTotal').textContent = Math.round(grandTotal).toLocaleString() + unit + debugText;
+        document.getElementById('nutriDailyAvg').textContent = Math.round(grandTotal / 7).toLocaleString() + unit;
+      }
+
+      chart?.destroy();
+      chart = new Chart(chartCanvas, {
+        type: chartType,
+        data: {
+          labels, datasets: [{
+            data,
+            borderColor: analyticsMode === 'workout' ? '#E9B872' : '#84cc16', // Lime/Greenish for nutrition
+            backgroundColor: analyticsMode === 'workout' ? 'rgba(233, 184, 114, 0.1)' : '#84cc16', // Solid bar for nutrition
+            tension: 0.3,
+            fill: true,
+            borderRadius: 4,
+            barThickness: 20
+          }]
+        },
+        options: chartOptions
+      });
+    }
+    function renderHistory() {
+      historyList.innerHTML = "";
+      const selectedMuscle = hMuscle.value;
+
+      // 1. Check if we are looking at Cardio history
+      const isCardio = selectedMuscle === "Cardio";
+
+      let lifetimeBests = {};
+
+      // 2. Loop through logs
+      Object.keys(logs).sort().reverse().forEach(d => {
+        let day = logs[d].filter(e => e.muscle === selectedMuscle);
+        if (!day.length) return;
+
+        historyList.innerHTML += `<div class='card log-ribbon'>${d}</div>`;
+
+        day.forEach(e => {
+          // Calculate Best (Distance for Cardio, Weight for Strength)
+          let maxVal = Math.max(...e.sets.map(s => s.w));
+          let bestSet = e.sets.find(s => s.w === maxVal);
+
+          // Update Lifetime Best logic
+          if (!lifetimeBests[e.exercise] ||
+            maxVal > lifetimeBests[e.exercise].weight ||
+            (maxVal === lifetimeBests[e.exercise].weight && bestSet.r > lifetimeBests[e.exercise].reps)) {
+
+            lifetimeBests[e.exercise] = {
+              weight: maxVal,
+              reps: bestSet.r,
+              date: d
+            };
+          }
+
+          let h = `<div class='card'><strong>${e.exercise}</strong>`;
+
+          // A. Render Sets
+          e.sets.forEach((s, i) => {
+            let text = isCardio
+              ? `🏃 ${s.w} km in ${s.r} min`
+              : `${s.w} kg × ${s.r}`;
+
+            let highlight = (!isCardio && s.w === maxVal) ? 'best-set' : 'muted';
+
+            h += `<div class='${highlight}'>Set ${i + 1}: ${text}</div>`;
+          });
+
+          // B. Render Note (NEW)
+          if (e.note) {
+            h += `<div class="muted" style="margin-top:8px; padding-top:4px; border-top:1px dashed var(--border); font-style:italic;">
+                 📝 ${e.note}
+               </div>`;
+          }
+
+          h += '</div>';
+          historyList.innerHTML += h;
+        });
+      });
+
+      // 3. Render Lifetime Bests Table
+      if (Object.keys(lifetimeBests).length > 0) {
+        let bestsHTML = `
       <div class="card" style="margin-top:20px; border: 2px solid var(--accent); background: var(--card);">
         <h4 style="margin-top:0; color:var(--accent);">🏆 Lifetime PRs</h4>
         <table style="width:100%; font-size:14px; border-collapse: collapse; text-align: left;">
@@ -958,35 +1576,237 @@ function renderHistory() {
           </tr>
     `;
 
-    for (const [ex, data] of Object.entries(lifetimeBests)) {
-      let bestText = isCardio 
-        ? `${data.weight} km <small>in ${data.reps}m</small>` 
-        : `${data.weight} <small>kg/lb</small> × ${data.reps}`;
+        for (const [ex, data] of Object.entries(lifetimeBests)) {
+          let bestText = isCardio
+            ? `${data.weight} km <small>in ${data.reps}m</small>`
+            : `${data.weight} <small>kg/lb</small> × ${data.reps}`;
 
-      bestsHTML += `
+          bestsHTML += `
         <tr style="border-bottom: 1px solid rgba(0,0,0,0.05);">
           <td style="padding:10px 4px;"><b>${ex}</b></td>
           <td style="padding:10px 4px;">${bestText}</td>
           <td style="padding:10px 4px;" class="muted">${data.date}</td>
         </tr>
       `;
+        }
+
+        bestsHTML += `</table></div>`;
+        historyList.innerHTML += bestsHTML;
+      }
+    }
+    window.deleteLog = function (i) {
+      if (confirm("Are you sure you want to delete this workout?")) {
+        logs[currentDate].splice(i, 1);
+        saveToStorage();
+        saveToFirebase();
+        renderLog();
+      }
+    };
+    /* ---------- NUTRITION LOGIC ---------- */
+
+    window.renderNutrition = function () {
+      const dayLogs = nutriLogs[currentDate] || [];
+      let totals = { c: 0, p: 0, cb: 0, f: 0 };
+      let listHtml = "";
+
+      dayLogs.sort((a, b) => a.time.localeCompare(b.time)).forEach((meal, mealIdx) => {
+        let mealCal = 0, mealPro = 0, mealCarb = 0, mealFat = 0;
+        let itemsHtml = "";
+
+        meal.items.forEach(item => {
+          const f = foods[item.food];
+          if (f) {
+            const ratio = item.g / 100;
+            mealCal += f.c * ratio; mealPro += f.p * ratio;
+            mealCarb += f.cb * ratio; mealFat += f.f * ratio;
+            itemsHtml += `<div class="meal-item-row"><span>${item.food} (${item.g}g)</span><span class="muted">${Math.round(f.c * ratio)} kcal</span></div>`;
+          }
+        });
+
+        totals.c += mealCal; totals.p += mealPro; totals.cb += mealCarb; totals.f += mealFat;
+
+        listHtml += `
+      <div class="card">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px; border-bottom:1px solid var(--border); padding-bottom:8px;">
+          <div>
+            <span style="font-size:0.8rem; font-weight:700; color:var(--accent); margin-right:6px;">MEAL ${mealIdx + 1}</span>
+            <span class="muted" style="font-size:0.8rem;">${meal.time}</span>
+            <div style="font-weight:700; font-size:1rem;">${meal.name}</div>
+          </div>
+          <button class="icon-btn" style="width:auto; padding:4px 8px;" onclick="deleteMeal(${mealIdx})">✕</button>
+        </div>
+        <div>${itemsHtml}</div>
+        <div style="margin-top:8px; padding-top:4px; border-top:1px solid var(--border); font-weight:700; font-size:0.9rem; text-align:right;">
+          ${Math.round(mealCal)} kcal · <span class="mc-pro">${Math.round(mealPro)}P</span> · <span class="mc-carb">${Math.round(mealCarb)}C</span> · <span class="mc-fat">${Math.round(mealFat)}F</span>
+        </div>
+      </div>`;
+      });
+
+      totalCal.textContent = Math.round(totals.c);
+      totalPro.textContent = Math.round(totals.p) + "g";
+      totalCarb.textContent = Math.round(totals.cb) + "g";
+      totalFat.textContent = Math.round(totals.f) + "g";
+      dailyMealsList.innerHTML = listHtml || `<div class="muted" style="text-align:center;">No meals logged today</div>`;
+    };
+
+    window.toggleFoodCreator = () => {
+      const el = document.getElementById('foodCreator');
+      el.style.display = el.style.display === 'none' ? 'block' : 'none';
+    };
+
+    window.createNewFood = () => {
+      const name = document.getElementById('newFoodName').value.trim();
+      if (!name || foods[name]) return alert("Valid name required");
+      foods[name] = {
+        c: parseFloat(newFoodCal.value) || 0, p: parseFloat(newFoodPro.value) || 0,
+        cb: parseFloat(newFoodCarb.value) || 0, f: parseFloat(newFoodFat.value) || 0
+      };
+      saveToStorage(); saveToFirebase(); toggleFoodCreator();
+    };
+
+    window.openMealModal = () => {
+      document.getElementById('nutriModal').style.display = 'flex';
+      document.getElementById('mealTime').value = new Date().toTimeString().substring(0, 5);
+      document.getElementById('mealName').value = "";
+      document.getElementById('mealIngredients').innerHTML = "";
+      document.getElementById('premadeSelect').value = ""; // Reset
+      addIngredientRow();
+    };
+
+    window.closeNutriModal = () => document.getElementById('nutriModal').style.display = 'none';
+
+    window.addIngredientRow = () => {
+      const div = document.createElement('div');
+      div.className = 'food-row';
+      let options = `<option value="">Select Food...</option>`;
+      Object.keys(foods).sort().forEach(f => options += `<option>${f}</option>`);
+      div.innerHTML = `<select onchange="calcLiveMeal()">${options}</select><input type="number" placeholder="g" oninput="calcLiveMeal()"><button onclick="this.parentElement.remove(); calcLiveMeal()">✕</button>`;
+      document.getElementById('mealIngredients').appendChild(div);
+    };
+
+    window.calcLiveMeal = () => {
+      let total = 0;
+      document.querySelectorAll('#mealIngredients .food-row').forEach(row => {
+        const fname = row.children[0].value;
+        const g = parseFloat(row.children[1].value) || 0;
+        if (fname && foods[fname]) total += (foods[fname].c * (g / 100));
+      });
+      document.getElementById('mealLiveCal').textContent = Math.round(total);
+    };
+
+    window.saveMealLog = () => {
+      let items = [];
+      document.querySelectorAll('#mealIngredients .food-row').forEach(row => {
+        const fname = row.children[0].value;
+        const g = parseFloat(row.children[1].value);
+        if (fname && g > 0) items.push({ food: fname, g: g });
+      });
+      if (items.length === 0) return;
+      nutriLogs[currentDate] = nutriLogs[currentDate] || [];
+      nutriLogs[currentDate].push({
+        time: document.getElementById('mealTime').value,
+        name: document.getElementById('mealName').value || "Meal",
+        items
+      });
+      saveToStorage(); saveToFirebase(); closeNutriModal(); renderNutrition();
+    };
+
+    window.deleteMeal = (idx) => {
+      nutriLogs[currentDate].splice(idx, 1);
+      saveToStorage(); saveToFirebase(); renderNutrition();
+    };
+
+
+    // Manage Food Logic
+    window.refreshManageSelectors = () => {
+      const sel = document.getElementById('manageFoodSelect');
+      if (!sel) return;
+      sel.innerHTML = '<option value="">Select Food to Edit...</option>';
+      Object.keys(foods).sort().forEach(f => sel.innerHTML += `<option>${f}</option>`);
+    };
+
+    window.loadFoodToEdit = () => {
+      const fname = document.getElementById('manageFoodSelect').value;
+      if (!fname || !foods[fname]) return;
+      const f = foods[fname];
+      document.getElementById('editFoodCal').value = f.c;
+      document.getElementById('editFoodPro').value = f.p;
+      document.getElementById('editFoodCarb').value = f.cb;
+      document.getElementById('editFoodFat').value = f.f;
+    };
+
+    window.updateFood = () => {
+      const fname = document.getElementById('manageFoodSelect').value;
+      if (!fname) return;
+      foods[fname] = {
+        c: parseFloat(document.getElementById('editFoodCal').value) || 0,
+        p: parseFloat(document.getElementById('editFoodPro').value) || 0,
+        cb: parseFloat(document.getElementById('editFoodCarb').value) || 0,
+        f: parseFloat(document.getElementById('editFoodFat').value) || 0
+      };
+      saveToStorage(); saveToFirebase(); alert('Food updated!');
+    };
+
+    // Meal Template Logic
+    window.addTemplateRow = (food = "", g = "") => {
+      const div = document.createElement('div');
+      div.className = 'food-row';
+      let options = `<option value="">Select Food...</option>`;
+      Object.keys(foods).sort().forEach(f => options += `<option selected="${f === food ? 'selected' : ''}">${f}</option>`);
+      div.innerHTML = `<select>${options}</select><input type="number" placeholder="g" value="${g}"><button onclick="this.parentElement.remove()">✕</button>`;
+      document.getElementById('templateIngredients').appendChild(div);
     }
 
-    bestsHTML += `</table></div>`;
-    historyList.innerHTML += bestsHTML;
-  }
-}loadFromStorage();normalizeExercises();refreshSelectors();renderLog();
-window.deleteLog = function(i) {
-  if (confirm("Are you sure you want to delete this workout?")) {
-    logs[currentDate].splice(i, 1);
-    saveToStorage();
-    saveToFirebase();
-    renderLog();
-  }
-};
-Object.assign(window,{showTab,openLog,closeLog,saveLog,addSet,changeDay,loadLogExercises,renderHistory,setMetric,addMuscle,addExercise});
+    window.saveTemplate = () => {
+      const name = document.getElementById('templateName').value.trim();
+      if (!name) return alert("Template name required");
+      let items = [];
+      document.querySelectorAll('#templateIngredients .food-row').forEach(row => {
+        const fname = row.children[0].value;
+        const g = parseFloat(row.children[1].value);
+        if (fname && g > 0) items.push({ food: fname, g });
+      });
+      if (items.length === 0) return alert("Add at least one food");
+
+      mealTemplates[name] = items;
+      saveToStorage(); saveToFirebase();
+      alert("Template saved!");
+      document.getElementById('templateName').value = "";
+      document.getElementById('templateIngredients').innerHTML = "";
+      refreshSelectors(); // updates the premade dropdown
+    };
+
+    window.loadPremadeMeal = () => {
+      const name = document.getElementById('premadeSelect').value;
+      if (!name || !mealTemplates[name]) return;
+
+      document.getElementById('mealName').value = name;
+      document.getElementById('mealIngredients').innerHTML = ""; // Clear existing
+
+      mealTemplates[name].forEach(item => {
+        // Reuse addIngredientRow logic but with values
+        const div = document.createElement('div');
+        div.className = 'food-row';
+        let options = `<option value="">Select Food...</option>`;
+        Object.keys(foods).sort().forEach(f => options += `<option ${f === item.food ? 'selected' : ''}>${f}</option>`);
+        div.innerHTML = `<select onchange="calcLiveMeal()">${options}</select><input type="number" placeholder="g" value="${item.g}" oninput="calcLiveMeal()"><button onclick="this.parentElement.remove(); calcLiveMeal()">✕</button>`;
+        document.getElementById('mealIngredients').appendChild(div);
+      });
+      calcLiveMeal();
+    };
 
 
-</script>
+    Object.assign(window, {
+      showTab, openLog, closeLog, saveLog, addSet, changeDay,
+      loadLogExercises, renderHistory, setMetric, addMuscle, addExercise,
+      toggleFoodCreator, createNewFood, openMealModal, closeNutriModal,
+      addIngredientRow, calcLiveMeal, saveMealLog, deleteMeal, renderNutrition,
+      setNutriMetric, switchAnalyticsMode, updateFood, saveTemplate, addTemplateRow, loadPremadeMeal,
+      loadFoodToEdit
+    });
+
+    // Initialize App
+    loadFromStorage(); refreshSelectors(); renderLog();</script>
 </body>
+
 </html>
