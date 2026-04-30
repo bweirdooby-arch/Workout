@@ -1381,6 +1381,238 @@
       border: none;
       box-shadow: 0 4px 16px rgba(34, 197, 94, 0.35);
     }
+
+    /* ===== AUTOMATION POPUP ===== */
+    #automationModal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(10px);
+      z-index: 300;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    .auto-sheet {
+      width: 100%;
+      max-width: 600px;
+      background: #0f1115;
+      border-radius: 28px 28px 0 0;
+      padding: 24px 20px 36px;
+      animation: slideUp 0.35s cubic-bezier(0.32,0.72,0,1);
+      max-height: 85vh;
+      overflow-y: auto;
+    }
+    .auto-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+      background: rgba(34,197,94,0.12);
+      border: 1px solid rgba(34,197,94,0.3);
+      color: var(--accent);
+      font-size: 0.72rem;
+      font-weight: 700;
+      padding: 4px 10px;
+      border-radius: 8px;
+      text-transform: uppercase;
+      letter-spacing: 0.05em;
+      margin-bottom: 10px;
+    }
+    .auto-title {
+      font-size: 1.25rem;
+      font-weight: 800;
+      margin: 0 0 4px;
+    }
+    .auto-time-tag {
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+    .auto-food-row {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding: 10px 0;
+      border-bottom: 1px solid rgba(255,255,255,0.05);
+      font-size: 0.9rem;
+    }
+    .auto-food-row:last-child { border-bottom: none; }
+    .auto-kcal-preview {
+      margin-top: 14px;
+      padding: 12px 16px;
+      background: rgba(34,197,94,0.08);
+      border: 1px solid rgba(34,197,94,0.2);
+      border-radius: 14px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-weight: 700;
+    }
+    .auto-actions {
+      display: grid;
+      grid-template-columns: 1fr 1fr 1fr;
+      gap: 8px;
+      margin-top: 16px;
+    }
+    .auto-btn {
+      padding: 13px 6px;
+      border-radius: 14px;
+      font-size: 0.85rem;
+      font-weight: 700;
+      border: none;
+    }
+    .auto-btn-skip {
+      background: rgba(239,68,68,0.1);
+      color: #f87171;
+    }
+    .auto-btn-log {
+      background: var(--accent);
+      color: var(--accent-fg);
+    }
+    .auto-btn-edit {
+      background: rgba(96,165,250,0.12);
+      color: #60a5fa;
+    }
+    .auto-queue-info {
+      text-align: center;
+      font-size: 0.72rem;
+      color: var(--muted);
+      margin-bottom: 16px;
+    }
+
+    /* ===== HOME PENDING BANNER ===== */
+    #autoPendingBanner {
+      position: fixed;
+      bottom: calc(70px + env(safe-area-inset-bottom));
+      left: 50%;
+      transform: translateX(-50%);
+      max-width: 380px;
+      width: calc(100% - 32px);
+      background: linear-gradient(135deg, rgba(34,197,94,0.18), rgba(96,165,250,0.12));
+      border: 1px solid rgba(34,197,94,0.35);
+      border-radius: 16px;
+      padding: 12px 16px;
+      display: none;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      z-index: 85;
+      backdrop-filter: blur(12px);
+      animation: slideUp 0.3s ease-out;
+      cursor: pointer;
+    }
+    #autoPendingBanner .banner-icon { font-size: 1.4rem; flex-shrink: 0; }
+    #autoPendingBanner .banner-text { flex: 1; font-size: 0.82rem; font-weight: 600; }
+    #autoPendingBanner .banner-text small { display:block; color:var(--muted); font-size:0.7rem; font-weight:400; }
+    #autoPendingBanner .banner-arrow { font-size: 1rem; color: var(--accent); }
+
+    /* ===== COPY PILL BUTTON ===== */
+    .copy-pill-btn {
+      font-size: 0.75rem;
+      font-weight: 700;
+      padding: 6px 12px;
+      border-radius: 10px;
+      background: rgba(96,165,250,0.12);
+      border: 1px solid rgba(96,165,250,0.25);
+      color: #60a5fa !important;
+      flex-shrink: 0;
+    }
+
+    /* ===== COPY PICKER MODAL ===== */
+    #copyPickerModal {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.7);
+      backdrop-filter: blur(10px);
+      z-index: 250;
+      display: none;
+      align-items: flex-end;
+      justify-content: center;
+    }
+    .copy-picker-sheet {
+      width: 100%;
+      max-width: 600px;
+      background: #0f1115;
+      border-radius: 28px 28px 0 0;
+      padding: 24px 20px 36px;
+      animation: slideUp 0.3s ease-out;
+    }
+    .copy-meal-option {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      padding: 14px 16px;
+      border-radius: 14px;
+      border: 1.5px solid rgba(255,255,255,0.07);
+      background: #171a21;
+      margin-bottom: 10px;
+      cursor: pointer;
+      transition: border-color 0.15s;
+    }
+    .copy-meal-option.selected {
+      border-color: var(--accent);
+      background: rgba(34,197,94,0.07);
+    }
+    .copy-meal-option .cmo-icon { font-size: 1.4rem; }
+    .copy-meal-option .cmo-info { flex: 1; }
+    .copy-meal-option .cmo-name { font-weight: 700; font-size: 0.95rem; }
+    .copy-meal-option .cmo-cal { font-size: 0.75rem; color: var(--muted); }
+    .copy-meal-check { width: 22px; height: 22px; border-radius: 50%; border: 2px solid rgba(255,255,255,0.2); display:flex; align-items:center; justify-content:center; font-size:0.8rem; flex-shrink:0; }
+    .copy-meal-option.selected .copy-meal-check { background: var(--accent); border-color: var(--accent); color: var(--accent-fg); }
+
+    /* ===== AUTOMATION TAB ===== */
+    .auto-rule-card {
+      display: flex;
+      align-items: center;
+      gap: 14px;
+      background: #171a21;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 16px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+    }
+    .auto-rule-icon {
+      width: 42px; height: 42px;
+      border-radius: 12px;
+      background: rgba(34,197,94,0.12);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.2rem; flex-shrink: 0;
+    }
+    .auto-rule-info { flex: 1; }
+    .auto-rule-name { font-weight: 700; font-size: 0.95rem; }
+    .auto-rule-time { font-size: 0.75rem; color: var(--accent); margin-top: 2px; }
+    .auto-rule-del {
+      width: 32px; height: 32px;
+      border-radius: 10px;
+      background: rgba(239,68,68,0.1);
+      color: #ef4444 !important;
+      border: none;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1rem; flex-shrink: 0;
+    }
+
+    /* ===== RECENT FOODS IN SEARCH ===== */
+    .lf-recent-label {
+      padding: 10px 16px 6px;
+      font-size: 0.65rem;
+      font-weight: 700;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+    }
+    .lf-sug-badge {
+      font-size: 0.62rem;
+      font-weight: 700;
+      padding: 2px 6px;
+      border-radius: 5px;
+      background: rgba(251,191,36,0.15);
+      color: #fbbf24;
+      flex-shrink: 0;
+    }
+    .lf-sug-badge.tmpl {
+      background: rgba(167,139,250,0.15);
+      color: #a78bfa;
+    }
   </style>
 
   <!-- Firebase SDK -->
@@ -1461,7 +1693,26 @@
       </svg>
       Analytics
     </button>
+    <button class="nav-item" id="nav-automation" onclick="showTab('automation', this)" style="position:relative;">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <circle cx="12" cy="12" r="3"></circle>
+        <path d="M19.07 4.93a10 10 0 0 1 0 14.14M4.93 4.93a10 10 0 0 0 0 14.14"></path>
+        <path d="M12 2v2M12 20v2M2 12h2M20 12h2"></path>
+      </svg>
+      Auto
+      <span id="autoBadge" style="position:absolute;top:6px;right:10px;width:8px;height:8px;border-radius:50%;background:#22C55E;display:none;"></span>
+    </button>
   </nav>
+
+  <!-- ===== HOME PENDING BANNER ===== -->
+  <div id="autoPendingBanner" onclick="goToNutritionWithAuto()">
+    <span class="banner-icon">🤖</span>
+    <div class="banner-text">
+      <span id="bannerText">Automation logs pending</span>
+      <small>Tap to review &amp; log</small>
+    </div>
+    <span class="banner-arrow">→</span>
+  </div>
 
   <!-- ===== DRAWER ===== -->
   <div id="drawer">
@@ -1624,6 +1875,7 @@
       <button class="day-nav-btn" onclick="changeDay(-1)">&#8592;</button>
       <div class="day-nav-label" id="nutriDayLabel">Today</div>
       <button class="day-nav-btn" onclick="changeDay(1)">&#8594;</button>
+      <button class="copy-pill-btn" onclick="copyYesterdayMeals()">📋 Copy</button>
     </div>
     <!-- Summary Card -->
     <div class="card" style="margin-top:12px;">
@@ -1767,11 +2019,30 @@
     <div class="card">
       <h4>🍱 Create Meal Template</h4>
       <input id="templateName" placeholder="Template Name (e.g., Oats & Milk)">
+      <input type="time" id="templateTime" style="margin:8px 0;">
       <div id="templateIngredients" style="margin:8px 0;"></div>
       <button class="secondary" onclick="addTemplateRow()">+ Add Food Item</button>
       <button class="primary" onclick="saveTemplate()">Save Template</button>
     </div>
 
+  </section>
+
+  <!-- ===== AUTOMATION TAB ===== -->
+  <section id="automation" class="view">
+    <div class="card" style="margin-top:12px;">
+      <h4 style="margin-bottom:4px;">🤖 Meal Automation Rules</h4>
+      <p class="muted" style="font-size:0.82rem; margin:0 0 16px;">Assign meal templates to scheduled times. The app will prompt you to log them each day.</p>
+      <!-- Rule Creator -->
+      <div style="display:grid; grid-template-columns:1fr 1fr; gap:8px; margin-bottom:8px;">
+        <select id="autoTemplateSelect" style="margin:0;">
+          <option value="">Pick Template...</option>
+        </select>
+        <input type="time" id="autoTimeInput" style="margin:0;" placeholder="Time">
+      </div>
+      <button class="primary" onclick="saveAutomationRule()">+ Add Rule</button>
+    </div>
+    <div class="section-label">Active Rules</div>
+    <div id="autoRulesList"></div>
   </section>
 
   <!-- ===== ANALYTICS ===== -->
@@ -1951,6 +2222,37 @@
     </div>
   </div>
 
+  <!-- ===== AUTOMATION POPUP MODAL ===== -->
+  <div id="automationModal">
+    <div class="auto-sheet">
+      <div class="auto-queue-info" id="autoQueueInfo"></div>
+      <div class="auto-badge">🤖 Meal Automation</div>
+      <div class="auto-title" id="autoPopupTitle">Template Name</div>
+      <div class="auto-time-tag" id="autoPopupTime">Scheduled at 10:00</div>
+      <div id="autoFoodList"></div>
+      <div class="auto-kcal-preview">
+        <span>Estimated</span>
+        <span id="autoKcalPreview" style="color:var(--accent);">0 kcal</span>
+      </div>
+      <div class="auto-actions">
+        <button class="auto-btn auto-btn-skip" onclick="automationAction('skip')">❌ Skip</button>
+        <button class="auto-btn auto-btn-log" onclick="automationAction('log')">✅ Log It</button>
+        <button class="auto-btn auto-btn-edit" onclick="automationAction('edit')">✏️ Edit</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ===== COPY PICKER MODAL ===== -->
+  <div id="copyPickerModal" onclick="if(event.target===this)closeCopyPicker()">
+    <div class="copy-picker-sheet">
+      <h4 style="margin:0 0 6px;">Which meals to copy?</h4>
+      <p class="muted" style="font-size:0.82rem; margin:0 0 16px;">Select meals from yesterday to copy to today.</p>
+      <div id="copyMealOptions"></div>
+      <button class="primary" onclick="confirmCopyMeals()" style="margin-top:8px;">Copy Selected</button>
+      <button class="secondary" onclick="closeCopyPicker()" style="margin-top:8px; background:none; border:none; color:var(--muted) !important;">Cancel</button>
+    </div>
+  </div>
+
   <div id="modal" onclick="if(event.target===this)closeLog()">
     <div class="sheet">
       <div style="width:40px; height:4px; background:var(--glass-border); border-radius:4px; margin:0 auto 20px;"></div>
@@ -2007,12 +2309,17 @@
     };
     let nutriLogs = {}; // Format: "YYYY-MM-DD": [ { time, name, items: [{food, g}] } ]
     let mealTemplates = {};
+    let automationRules = []; // [{ templateName, scheduledTime }]
     let logs = {};
     let nutritionGoals = { c: 2000, p: 150, cb: 200, f: 65 };
     let currentDate = new Date().toISOString().split("T")[0];
     date.value = currentDate;
     updateDayName();
     let metric = "max", chart, editIndex = null, currentUserId = null;
+    // Automation session tracking (which templates already prompted this session)
+    let autoSessionSeen = new Set();
+    let autoPendingQueue = [];
+    let autoCurrentRule = null;
 
     /* ---------- AUTH ---------- */
     fb.onAuthStateChanged(fb.auth, async user => {
@@ -2028,6 +2335,7 @@
           foods = { ...foods, ...(data.foods || {}) };
           nutriLogs = data.nutriLogs || {};
           mealTemplates = data.mealTemplates || {};
+          automationRules = data.automationRules || [];
           nutritionGoals = data.nutritionGoals || nutritionGoals;
 
           saveToStorage();
@@ -2088,7 +2396,7 @@
 
     /* ---------- STORAGE ---------- */
     function saveToStorage() {
-      localStorage.setItem("workout", JSON.stringify({ muscles, exercises, logs, foods, nutriLogs, mealTemplates, nutritionGoals }));
+      localStorage.setItem("workout", JSON.stringify({ muscles, exercises, logs, foods, nutriLogs, mealTemplates, automationRules, nutritionGoals }));
     }
 
     function loadFromStorage() {
@@ -2100,13 +2408,14 @@
         foods = { ...foods, ...(d.foods || {}) };
         nutriLogs = d.nutriLogs || {};
         mealTemplates = d.mealTemplates || {};
+        automationRules = d.automationRules || [];
         nutritionGoals = d.nutritionGoals || nutritionGoals;
       }
     }
 
     async function saveToFirebase() {
       if (!currentUserId) return;
-      await fb.setDoc(fb.doc(fb.db, "users", currentUserId), { muscles, exercises, logs, foods, nutriLogs, mealTemplates, nutritionGoals });
+      await fb.setDoc(fb.doc(fb.db, "users", currentUserId), { muscles, exercises, logs, foods, nutriLogs, mealTemplates, automationRules, nutritionGoals });
     }
 
 
@@ -2196,6 +2505,11 @@
       if (preSel) {
         preSel.innerHTML = '<option value="">Load Premade Meal...</option>';
         Object.keys(mealTemplates).sort().forEach(t => preSel.innerHTML += `<option>${t}</option>`);
+      }
+      const autoSel = document.getElementById('autoTemplateSelect');
+      if (autoSel) {
+        autoSel.innerHTML = '<option value="">Pick Template...</option>';
+        Object.keys(mealTemplates).sort().forEach(t => autoSel.innerHTML += `<option>${t}</option>`);
       }
       refreshManageSelectors();
       loadLogExercises();
@@ -2351,7 +2665,6 @@
       if (b && b.classList.contains('nav-item')) {
         b.classList.add('active');
       } else {
-        // Find the matching nav item if triggered from drawer/script
         document.querySelectorAll('.nav-item').forEach(nav => {
           if (nav.innerHTML.toLowerCase().includes(t)) nav.classList.add('active');
         });
@@ -2362,11 +2675,16 @@
       if (fab) fab.style.display = (t === 'log') ? 'flex' : 'none';
 
       // 4. Render Logic
-      if (t === 'home') renderHome();
+      if (t === 'home') { renderHome(); updateAutoBanner(); }
       if (t === 'analytics') renderAnalytics();
       if (t === 'history') renderHistory();
-      if (t === 'nutrition') renderNutrition();
+      if (t === 'nutrition') { renderNutrition(); checkAutomationPrompts(); }
       if (t === 'log') renderLog();
+      if (t === 'automation') renderAutomationTab();
+
+      // 5. Hide banner when on nutrition
+      const banner = document.getElementById('autoPendingBanner');
+      if (banner) banner.style.display = (t === 'home' && getPendingAutoRules().length > 0) ? 'flex' : 'none';
     };
 
     let homeNutriChartInst = null;
@@ -2772,7 +3090,7 @@
       document.getElementById('mealIngredients').innerHTML = '';
       document.getElementById('lfSuggestions').innerHTML = '';
       const fs = document.getElementById('foodSearch');
-      if (fs) { fs.value = ''; setTimeout(() => fs.focus(), 350); }
+      if (fs) { fs.value = ''; setTimeout(() => { fs.focus(); showRecentFoods(); }, 350); }
       const cb = document.getElementById('lfClearBtn'); if (cb) cb.style.display = 'none';
       lfRecalcTotal();
     };
@@ -2923,23 +3241,66 @@
       document.getElementById('mealIngredients').appendChild(div);
     };
 
+    function getRecentFoods() {
+      const seen = [], result = [];
+      const allDates = Object.keys(nutriLogs).sort().reverse();
+      for (const d of allDates) {
+        for (const meal of (nutriLogs[d] || [])) {
+          for (const item of (meal.items || [])) {
+            if (!seen.includes(item.food) && foods[item.food]) {
+              seen.push(item.food); result.push(item.food);
+              if (result.length >= 6) return result;
+            }
+          }
+        }
+      }
+      return result;
+    }
+    function showRecentFoods() {
+      const sugg = document.getElementById('lfSuggestions'); if (!sugg) return;
+      const recent = getRecentFoods();
+      if (!recent.length) { sugg.innerHTML = ''; return; }
+      sugg.innerHTML = `<div class="lf-recent-label">⏱️ Recently Used</div>` +
+        recent.map(m => { const f = foods[m]; return `<div class="lf-suggestion-item" onclick="lfSelectFood('${m.replace(/'/g,'\\"')}')">
+            <span class="lf-sug-name">${m}</span><span class="lf-sug-cal">${f.c} kcal/100g</span></div>`; }).join('');
+    }
     window.filterFoodOptions = (query) => {
       const sugg = document.getElementById('lfSuggestions');
       const cb = document.getElementById('lfClearBtn');
       if (cb) cb.style.display = query ? 'flex' : 'none';
       if (!sugg) return;
-      if (!query) { sugg.innerHTML = ''; return; }
-      const matches = Object.keys(foods)
-        .filter(f => f.toLowerCase().includes(query.toLowerCase()))
-        .sort().slice(0, 8);
-      if (!matches.length) { sugg.innerHTML = `<div class="lf-suggestion-item"><span class="lf-sug-name" style="color:var(--muted)">No foods found</span></div>`; return; }
-      sugg.innerHTML = matches.map(m => {
-        const f = foods[m];
-        return `<div class="lf-suggestion-item" onclick="lfSelectFood('${m.replace(/'/g, '\\"')}')">
-          <span class="lf-sug-name">${m}</span>
-          <span class="lf-sug-cal">${f.c} kcal / 100g</span>
-        </div>`;
-      }).join('');
+      if (!query) { showRecentFoods(); return; }
+      const q = query.toLowerCase();
+      const tmplMatches = Object.keys(mealTemplates).filter(t => t.toLowerCase().includes(q)).slice(0, 3);
+      const foodMatches = Object.keys(foods).filter(f => f.toLowerCase().includes(q)).sort().slice(0, 6);
+      if (!tmplMatches.length && !foodMatches.length) {
+        sugg.innerHTML = `<div class="lf-suggestion-item"><span class="lf-sug-name" style="color:var(--muted)">No foods found</span></div>`; return;
+      }
+      let html = '';
+      if (tmplMatches.length) {
+        html += `<div class="lf-recent-label">📋 Templates</div>`;
+        html += tmplMatches.map(t => {
+          const totalK = (mealTemplates[t]||[]).reduce((s,i)=>{const f=foods[i.food];return s+(f?f.c*i.g/100:0);},0);
+          return `<div class="lf-suggestion-item" onclick="lfSelectTemplate('${t.replace(/'/g,'\\"')}')">
+            <span class="lf-sug-name">${t} <span class="lf-sug-badge tmpl">Template</span></span>
+            <span class="lf-sug-cal">${Math.round(totalK)} kcal total</span></div>`;
+        }).join('');
+      }
+      if (foodMatches.length) {
+        if (tmplMatches.length) html += `<div class="lf-recent-label">🫕 Foods</div>`;
+        html += foodMatches.map(m => { const f=foods[m]; return `<div class="lf-suggestion-item" onclick="lfSelectFood('${m.replace(/'/g,'\\"')}')">
+            <span class="lf-sug-name">${m}</span><span class="lf-sug-cal">${f.c} kcal/100g</span></div>`;
+        }).join('');
+      }
+      sugg.innerHTML = html;
+    };
+    window.lfSelectTemplate = (templateName) => {
+      const tmpl = mealTemplates[templateName]; if (!tmpl) return;
+      document.getElementById('lfSuggestions').innerHTML = '';
+      document.getElementById('mealName').value = templateName;
+      const fs = document.getElementById('foodSearch'); if (fs) fs.value = '';
+      const cb = document.getElementById('lfClearBtn'); if (cb) cb.style.display = 'none';
+      tmpl.forEach(item => lfAddFoodCard(item.food, item.g));
     };
 
     window.clearFoodSearch = () => {
@@ -3138,10 +3499,197 @@
       toggleFoodCreator, createNewFood, openMealModal, closeNutriModal,
       addIngredientRow, calcLiveMeal, saveMealLog, deleteMeal, renderNutrition,
       setNutriMetric, switchAnalyticsMode, updateFood, saveTemplate, addTemplateRow, loadPremadeMeal,
-      loadFoodToEdit, toggleDrawer
+      loadFoodToEdit, toggleDrawer, filterFoodOptions, lfSelectTemplate, showRecentFoods
     });
 
-    loadFromStorage(); refreshSelectors(); showTab('home');</script>
+    /* ===== AUTOMATION LOGIC ===== */
+    function getToday() { return new Date().toISOString().split('T')[0]; }
+
+    function isTemplateLoggedToday(templateName) {
+      return (nutriLogs[getToday()] || []).some(m => m.name === templateName);
+    }
+
+    function getPendingAutoRules() {
+      const now = new Date();
+      const nowMins = now.getHours() * 60 + now.getMinutes();
+      return automationRules.filter(rule => {
+        if (!rule.scheduledTime || !mealTemplates[rule.templateName]) return false;
+        const [h, m] = rule.scheduledTime.split(':').map(Number);
+        if ((h * 60 + m) > nowMins) return false;
+        if (isTemplateLoggedToday(rule.templateName)) return false;
+        if (autoSessionSeen.has(rule.templateName)) return false;
+        return true;
+      });
+    }
+
+    function updateAutoBanner() {
+      const pending = getPendingAutoRules();
+      const banner = document.getElementById('autoPendingBanner');
+      const badge = document.getElementById('autoBadge');
+      if (!banner) return;
+      const isHome = document.getElementById('home').classList.contains('active');
+      if (pending.length > 0 && isHome) {
+        banner.style.display = 'flex';
+        document.getElementById('bannerText').textContent =
+          pending.length + ' meal automation' + (pending.length > 1 ? 's' : '') + ' pending';
+        if (badge) badge.style.display = 'block';
+      } else {
+        banner.style.display = 'none';
+        if (badge) badge.style.display = pending.length > 0 ? 'block' : 'none';
+      }
+    }
+
+    function checkAutomationPrompts() {
+      autoPendingQueue = getPendingAutoRules();
+      if (autoPendingQueue.length > 0) showNextAutomationPopup();
+      else updateAutoBanner();
+    }
+
+    function showNextAutomationPopup() {
+      if (!autoPendingQueue.length) {
+        document.getElementById('automationModal').style.display = 'none';
+        updateAutoBanner(); return;
+      }
+      autoCurrentRule = autoPendingQueue[0];
+      const tmpl = mealTemplates[autoCurrentRule.templateName] || [];
+      let totalKcal = 0, foodHtml = '';
+      tmpl.forEach(item => {
+        const f = foods[item.food];
+        const kcal = f ? Math.round(f.c * item.g / 100) : 0;
+        totalKcal += kcal;
+        foodHtml += '<div class="auto-food-row"><span>' + item.food + ' <small style="color:var(--muted)">(' + item.g + 'g)</small></span><span style="color:var(--accent);font-weight:700;">' + kcal + ' kcal</span></div>';
+      });
+      const rem = autoPendingQueue.length;
+      document.getElementById('autoQueueInfo').textContent = rem > 1 ? rem + ' meals pending — reviewing 1 of ' + rem : '';
+      document.getElementById('autoPopupTitle').textContent = autoCurrentRule.templateName;
+      document.getElementById('autoPopupTime').textContent = 'Scheduled at ' + autoCurrentRule.scheduledTime;
+      document.getElementById('autoFoodList').innerHTML = foodHtml;
+      document.getElementById('autoKcalPreview').textContent = Math.round(totalKcal) + ' kcal';
+      document.getElementById('automationModal').style.display = 'flex';
+    }
+
+    window.automationAction = function(action) {
+      if (!autoCurrentRule) return;
+      const rule = autoCurrentRule;
+      autoSessionSeen.add(rule.templateName);
+      autoPendingQueue.shift();
+      document.getElementById('automationModal').style.display = 'none';
+      if (action === 'skip') {
+        showNextAutomationPopup();
+      } else if (action === 'log') {
+        const items = (mealTemplates[rule.templateName] || []).map(i => ({ food: i.food, g: i.g }));
+        if (items.length > 0) {
+          nutriLogs[getToday()] = nutriLogs[getToday()] || [];
+          nutriLogs[getToday()].push({ time: new Date().toTimeString().substring(0,5), name: rule.templateName, items });
+          saveToStorage(); saveToFirebase();
+          if (document.getElementById('nutrition').classList.contains('active')) renderNutrition();
+          renderHome();
+        }
+        showNextAutomationPopup();
+      } else if (action === 'edit') {
+        openMealModal(rule.templateName);
+        setTimeout(() => {
+          document.getElementById('mealIngredients').innerHTML = '';
+          (mealTemplates[rule.templateName] || []).forEach(item => lfAddFoodCard(item.food, item.g));
+        }, 150);
+        const origSave = window.saveMealLog;
+        window.saveMealLog = function() { origSave(); window.saveMealLog = origSave; showNextAutomationPopup(); };
+      }
+    };
+
+    window.goToNutritionWithAuto = function() {
+      showTab('nutrition', document.getElementById('nav-nutrition'));
+    };
+
+    window.renderAutomationTab = function() {
+      const sel = document.getElementById('autoTemplateSelect');
+      if (sel) {
+        sel.innerHTML = '<option value="">Pick Template...</option>';
+        Object.keys(mealTemplates).sort().forEach(t => sel.innerHTML += '<option>' + t + '</option>');
+      }
+      const list = document.getElementById('autoRulesList');
+      if (!list) return;
+      if (!automationRules.length) {
+        list.innerHTML = '<div class="muted" style="text-align:center;padding:30px;">No automation rules yet. Create one above.</div>'; return;
+      }
+      const icons = ['🌅','☀️','🌤️','🌙','🍎','🥗','🍽️','⏰'];
+      list.innerHTML = automationRules.map((rule, idx) =>
+        '<div class="auto-rule-card">' +
+          '<div class="auto-rule-icon">' + icons[idx % icons.length] + '</div>' +
+          '<div class="auto-rule-info">' +
+            '<div class="auto-rule-name">' + rule.templateName + '</div>' +
+            '<div class="auto-rule-time">⏰ ' + rule.scheduledTime + (isTemplateLoggedToday(rule.templateName) ? ' · <span style="color:#4ade80">✓ Logged today</span>' : '') + '</div>' +
+          '</div>' +
+          '<button class="auto-rule-del" onclick="deleteAutomationRule(' + idx + ')">✕</button>' +
+        '</div>'
+      ).join('');
+    };
+
+    window.saveAutomationRule = function() {
+      const tName = document.getElementById('autoTemplateSelect').value;
+      const tTime = document.getElementById('autoTimeInput').value;
+      if (!tName || !tTime) return alert('Please select a template and set a time.');
+      const existing = automationRules.findIndex(r => r.templateName === tName);
+      if (existing !== -1) automationRules[existing].scheduledTime = tTime;
+      else automationRules.push({ templateName: tName, scheduledTime: tTime });
+      saveToStorage(); saveToFirebase(); renderAutomationTab(); updateAutoBanner();
+    };
+
+    window.deleteAutomationRule = function(idx) {
+      automationRules.splice(idx, 1);
+      saveToStorage(); saveToFirebase(); renderAutomationTab(); updateAutoBanner();
+    };
+
+    /* ===== COPY MEALS LOGIC ===== */
+    let copySelectedMeals = [];
+
+    window.copyYesterdayMeals = function() {
+      const d = new Date(currentDate + 'T12:00:00');
+      d.setDate(d.getDate() - 1);
+      const yesterday = d.toISOString().split('T')[0];
+      const yMeals = nutriLogs[yesterday];
+      if (!yMeals || !yMeals.length) { alert('No meals logged yesterday to copy.'); return; }
+      if (!(nutriLogs[currentDate] || []).length) {
+        nutriLogs[currentDate] = JSON.parse(JSON.stringify(yMeals));
+        saveToStorage(); saveToFirebase(); renderNutrition(); renderHome(); return;
+      }
+      const mealNames = [...new Set(yMeals.map(m => m.name))];
+      const icons2 = { Breakfast: '🌅', Lunch: '☀️', Dinner: '🌙', Snack: '🍎' };
+      document.getElementById('copyMealOptions').innerHTML = mealNames.map((name, i) => {
+        const mCal = yMeals.filter(m => m.name === name).reduce((s, m) =>
+          s + m.items.reduce((ss, item) => { const f=foods[item.food]; return ss+(f?f.c*item.g/100:0); }, 0), 0);
+        return '<div class="copy-meal-option selected" id="cmo_' + i + '" onclick="toggleCopyOption(' + i + ',\'' + name.replace(/'/g,"\\'") + '\')">' +
+          '<span class="cmo-icon">' + (icons2[name] || '🍽️') + '</span>' +
+          '<div class="cmo-info"><div class="cmo-name">' + name + '</div><div class="cmo-cal">' + Math.round(mCal) + ' kcal</div></div>' +
+          '<div class="copy-meal-check">✓</div></div>';
+      }).join('');
+      copySelectedMeals = [...mealNames];
+      document.getElementById('copyPickerModal').style.display = 'flex';
+    };
+
+    window.toggleCopyOption = function(idx, name) {
+      const el = document.getElementById('cmo_' + idx);
+      el.classList.toggle('selected');
+      if (copySelectedMeals.includes(name)) copySelectedMeals = copySelectedMeals.filter(n => n !== name);
+      else copySelectedMeals.push(name);
+    };
+
+    window.confirmCopyMeals = function() {
+      const d2 = new Date(currentDate + 'T12:00:00'); d2.setDate(d2.getDate() - 1);
+      const yesterday = d2.toISOString().split('T')[0];
+      const yMeals = nutriLogs[yesterday] || [];
+      const toCopy = yMeals.filter(m => copySelectedMeals.includes(m.name));
+      nutriLogs[currentDate] = nutriLogs[currentDate] || [];
+      nutriLogs[currentDate].push(...JSON.parse(JSON.stringify(toCopy)));
+      saveToStorage(); saveToFirebase(); closeCopyPicker(); renderNutrition(); renderHome();
+    };
+
+    window.closeCopyPicker = function() {
+      document.getElementById('copyPickerModal').style.display = 'none';
+    };
+
+    loadFromStorage(); refreshSelectors(); showTab('home');
+    localStorage.setItem('lastOpenedDate', getToday());</script>
 </body>
 
 </html>
