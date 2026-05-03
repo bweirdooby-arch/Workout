@@ -1591,6 +1591,62 @@
       font-size: 1rem; flex-shrink: 0;
     }
 
+    /* ===== TEMPLATE LIST CARDS ===== */
+    .tmpl-card {
+      background: #171a21;
+      border: 1px solid rgba(255,255,255,0.07);
+      border-radius: 16px;
+      padding: 14px 16px;
+      margin-bottom: 10px;
+    }
+    .tmpl-card-header {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      margin-bottom: 8px;
+    }
+    .tmpl-card-name {
+      font-weight: 700;
+      font-size: 1rem;
+    }
+    .tmpl-card-actions {
+      display: flex;
+      gap: 6px;
+    }
+    .tmpl-edit-btn {
+      padding: 6px 12px;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      font-weight: 700;
+      background: rgba(96,165,250,0.12);
+      color: #60a5fa !important;
+      border: none;
+    }
+    .tmpl-del-btn {
+      padding: 6px 10px;
+      border-radius: 10px;
+      font-size: 0.8rem;
+      background: rgba(239,68,68,0.1);
+      color: #ef4444 !important;
+      border: none;
+    }
+    .tmpl-item-row {
+      display: flex;
+      justify-content: space-between;
+      font-size: 0.82rem;
+      color: var(--muted);
+      padding: 3px 0;
+    }
+    .tmpl-kcal-tag {
+      font-size: 0.72rem;
+      font-weight: 700;
+      color: var(--accent);
+      background: rgba(34,197,94,0.1);
+      border-radius: 6px;
+      padding: 2px 7px;
+      margin-top: 8px;
+      display: inline-block;
+    }
     /* ===== RECENT FOODS IN SEARCH ===== */
     .lf-recent-label {
       padding: 10px 16px 6px;
@@ -1746,7 +1802,7 @@
           <div class="goal-row"><label>Fat</label><input type="number" id="goalFat" placeholder="g"></div>
           <button class="primary" style="margin-top:6px; padding:12px;" onclick="saveGoals()">Save Goals</button>
         </div>
-        <button class="drawer-item" onclick="showTab('manage'); toggleDrawer();">
+        <button class="drawer-item" onclick="showTab('meal-templates'); toggleDrawer();">
           <div class="drawer-item-icon" style="background:rgba(251,146,60,0.12);">🍱</div>
           <span>Meal Templates</span>
         </button>
@@ -2015,16 +2071,24 @@
       </div>
       <button class="primary" onclick="updateFood()">Update Food</button>
     </div>
+  </section>
 
-    <div class="card">
-      <h4>🍱 Create Meal Template</h4>
-      <input id="templateName" placeholder="Template Name (e.g., Oats & Milk)">
-      <input type="time" id="templateTime" style="margin:8px 0;">
-      <div id="templateIngredients" style="margin:8px 0;"></div>
-      <button class="secondary" onclick="addTemplateRow()">+ Add Food Item</button>
-      <button class="primary" onclick="saveTemplate()">Save Template</button>
+  <!-- ===== MEAL TEMPLATES TAB ===== -->
+  <section id="meal-templates" class="view">
+    <div class="section-label" style="margin-top:12px;">Your Templates</div>
+    <div id="templateList"></div>
+
+    <!-- Create / Edit Form -->
+    <div class="card" style="margin-top:4px; border: 1.5px solid rgba(34,197,94,0.2);">
+      <div style="display:flex; align-items:center; justify-content:space-between; margin-bottom:14px;">
+        <h4 style="margin:0;" id="templateFormTitle">🍱 New Template</h4>
+        <button id="templateCancelBtn" onclick="cancelEditTemplate()" style="display:none; background:rgba(239,68,68,0.1); color:#ef4444; padding:6px 14px; border-radius:10px; font-size:0.8rem; font-weight:700; border:none;">✕ Cancel</button>
+      </div>
+      <input id="templateName" placeholder="Template Name (e.g., Oats &amp; Milk)">
+      <div id="templateIngredients" style="margin:10px 0;"></div>
+      <button class="secondary" onclick="addTemplateRow()" style="margin-bottom:8px;">+ Add Food Item</button>
+      <button class="primary" onclick="saveTemplate()" id="templateSaveBtn">💾 Save Template</button>
     </div>
-
   </section>
 
   <!-- ===== AUTOMATION TAB ===== -->
@@ -2316,10 +2380,29 @@
     date.value = currentDate;
     updateDayName();
     let metric = "max", chart, editIndex = null, currentUserId = null;
-    // Automation session tracking (which templates already prompted this session)
+    // Automation session tracking — persisted per-day to survive app restarts
     let autoSessionSeen = new Set();
     let autoPendingQueue = [];
     let autoCurrentRule = null;
+
+    function getSkippedKey() { return 'autoSkipped_' + getToday(); }
+    function loadSkippedToday() {
+      try { const s = localStorage.getItem(getSkippedKey()); if (s) JSON.parse(s).forEach(n => autoSessionSeen.add(n)); } catch(e){}
+    }
+    function persistSkipped(name) {
+      autoSessionSeen.add(name);
+      try {
+        const key = getSkippedKey();
+        const arr = JSON.parse(localStorage.getItem(key) || '[]');
+        if (!arr.includes(name)) arr.push(name);
+        localStorage.setItem(key, JSON.stringify(arr));
+        // Clean up old skip keys (keep only last 3 days)
+        for (let i = 3; i < 10; i++) {
+          const d = new Date(); d.setDate(d.getDate() - i);
+          localStorage.removeItem('autoSkipped_' + d.toISOString().split('T')[0]);
+        }
+      } catch(e){}
+    }
 
     /* ---------- AUTH ---------- */
     fb.onAuthStateChanged(fb.auth, async user => {
@@ -2681,6 +2764,7 @@
       if (t === 'nutrition') { renderNutrition(); checkAutomationPrompts(); }
       if (t === 'log') renderLog();
       if (t === 'automation') renderAutomationTab();
+      if (t === 'meal-templates') renderTemplateList();
 
       // 5. Hide banner when on nutrition
       const banner = document.getElementById('autoPendingBanner');
@@ -3444,15 +3528,17 @@
       saveToStorage(); saveToFirebase(); alert('Food updated!');
     };
 
-    // Meal Template Logic
+    // ===== MEAL TEMPLATE LOGIC =====
+    let editingTemplateName = null;
+
     window.addTemplateRow = (food = "", g = "") => {
       const div = document.createElement('div');
       div.className = 'food-row';
       let options = `<option value="">Select Food...</option>`;
-      Object.keys(foods).sort().forEach(f => options += `<option selected="${f === food ? 'selected' : ''}">${f}</option>`);
+      Object.keys(foods).sort().forEach(f => options += `<option${f === food ? ' selected' : ''}>${f}</option>`);
       div.innerHTML = `<select>${options}</select><input type="number" placeholder="g" value="${g}"><button onclick="this.parentElement.remove()">✕</button>`;
       document.getElementById('templateIngredients').appendChild(div);
-    }
+    };
 
     window.saveTemplate = () => {
       const name = document.getElementById('templateName').value.trim();
@@ -3464,13 +3550,77 @@
         if (fname && g > 0) items.push({ food: fname, g });
       });
       if (items.length === 0) return alert("Add at least one food");
-
+      // If renaming during edit, remove old key
+      if (editingTemplateName && editingTemplateName !== name) {
+        delete mealTemplates[editingTemplateName];
+      }
       mealTemplates[name] = items;
       saveToStorage(); saveToFirebase();
-      alert("Template saved!");
-      document.getElementById('templateName').value = "";
-      document.getElementById('templateIngredients').innerHTML = "";
-      refreshSelectors(); // updates the premade dropdown
+      cancelEditTemplate();
+      renderTemplateList();
+      refreshSelectors();
+    };
+
+    window.editTemplate = (name) => {
+      const tmpl = mealTemplates[name]; if (!tmpl) return;
+      editingTemplateName = name;
+      document.getElementById('templateName').value = name;
+      document.getElementById('templateIngredients').innerHTML = '';
+      tmpl.forEach(item => addTemplateRow(item.food, item.g));
+      document.getElementById('templateFormTitle').textContent = '✏️ Edit Template';
+      document.getElementById('templateSaveBtn').textContent = '💾 Update Template';
+      document.getElementById('templateCancelBtn').style.display = 'block';
+      // Scroll to form
+      document.getElementById('templateFormTitle').scrollIntoView({ behavior: 'smooth', block: 'start' });
+    };
+
+    window.cancelEditTemplate = () => {
+      editingTemplateName = null;
+      document.getElementById('templateName').value = '';
+      document.getElementById('templateIngredients').innerHTML = '';
+      document.getElementById('templateFormTitle').textContent = '🍱 New Template';
+      document.getElementById('templateSaveBtn').textContent = '💾 Save Template';
+      document.getElementById('templateCancelBtn').style.display = 'none';
+    };
+
+    window.deleteTemplate = (name) => {
+      if (!confirm('Delete template "' + name + '"?')) return;
+      delete mealTemplates[name];
+      saveToStorage(); saveToFirebase();
+      if (editingTemplateName === name) cancelEditTemplate();
+      renderTemplateList();
+      refreshSelectors();
+    };
+
+    window.renderTemplateList = () => {
+      const list = document.getElementById('templateList');
+      if (!list) return;
+      const keys = Object.keys(mealTemplates).sort();
+      if (!keys.length) {
+        list.innerHTML = '<div class="muted" style="text-align:center; padding:24px;">No templates yet. Create one below.</div>';
+        return;
+      }
+      list.innerHTML = keys.map(name => {
+        const items = mealTemplates[name] || [];
+        const totalKcal = items.reduce((s, i) => { const f = foods[i.food]; return s + (f ? f.c * i.g / 100 : 0); }, 0);
+        const itemRows = items.map(i => {
+          const f = foods[i.food];
+          const kcal = f ? Math.round(f.c * i.g / 100) : 0;
+          return `<div class="tmpl-item-row"><span>${i.food} <span style="opacity:0.5">(${i.g}g)</span></span><span>${kcal} kcal</span></div>`;
+        }).join('');
+        return `
+          <div class="tmpl-card">
+            <div class="tmpl-card-header">
+              <div class="tmpl-card-name">🍽 ${name}</div>
+              <div class="tmpl-card-actions">
+                <button class="tmpl-edit-btn" onclick="editTemplate('${name.replace(/'/g, "\\'")}')">✏️ Edit</button>
+                <button class="tmpl-del-btn" onclick="deleteTemplate('${name.replace(/'/g, "\\'")}')">✕</button>
+              </div>
+            </div>
+            ${itemRows}
+            <div class="tmpl-kcal-tag">~${Math.round(totalKcal)} kcal total</div>
+          </div>`;
+      }).join('');
     };
 
     window.loadPremadeMeal = () => {
@@ -3499,7 +3649,8 @@
       toggleFoodCreator, createNewFood, openMealModal, closeNutriModal,
       addIngredientRow, calcLiveMeal, saveMealLog, deleteMeal, renderNutrition,
       setNutriMetric, switchAnalyticsMode, updateFood, saveTemplate, addTemplateRow, loadPremadeMeal,
-      loadFoodToEdit, toggleDrawer, filterFoodOptions, lfSelectTemplate, showRecentFoods
+      loadFoodToEdit, toggleDrawer, filterFoodOptions, lfSelectTemplate, showRecentFoods,
+      editTemplate, deleteTemplate, cancelEditTemplate, renderTemplateList
     });
 
     /* ===== AUTOMATION LOGIC ===== */
@@ -3571,7 +3722,7 @@
     window.automationAction = function(action) {
       if (!autoCurrentRule) return;
       const rule = autoCurrentRule;
-      autoSessionSeen.add(rule.templateName);
+      persistSkipped(rule.templateName);
       autoPendingQueue.shift();
       document.getElementById('automationModal').style.display = 'none';
       if (action === 'skip') {
@@ -3688,7 +3839,10 @@
       document.getElementById('copyPickerModal').style.display = 'none';
     };
 
-    loadFromStorage(); refreshSelectors(); showTab('home');
+    loadFromStorage();
+    // Load today's skipped automation meals so they don't re-prompt on reopen
+    loadSkippedToday();
+    refreshSelectors(); showTab('home');
     localStorage.setItem('lastOpenedDate', getToday());</script>
 </body>
 
